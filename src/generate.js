@@ -5,6 +5,7 @@ const concat = require('concat-stream')
 const YAML = require('yaml')
 const collect = require('collect.js')
 const entityLookupData = require('./entity-lookup')
+const htmlmathmlData = require('./htmlmathml')
 
 function format(data) {
   return collect(data)
@@ -19,12 +20,21 @@ function format(data) {
           tags: item.tags.slice(1),
         }))
         .first()
+      const htmlmathmlItem = collect(htmlmathmlData)
+        .filter(item => entities.includes(item.name))
+        .map(item => ({
+          ...item,
+          description: item.description.toLowerCase(),
+        }))
+        .first()
       const tags = entityLookupItem ? entityLookupItem.tags : []
+      const description = htmlmathmlItem ? htmlmathmlItem.description : []
 
       return [{
         symbol,
         entities,
         tags,
+        description,
       }]
     })
     .flatten(1)
