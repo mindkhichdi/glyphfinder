@@ -32,9 +32,9 @@ function format(data) {
 
       return [{
         symbol,
+        description,
         entities,
         tags,
-        description,
       }]
     })
     .flatten(1)
