@@ -56,13 +56,13 @@ export default new class {
         // exact match
         query.term(searchQuery, {
           fields: ['symbol', 'entities', 'alts', 'tags'],
-          boost: 3,
+          boost: 10,
         })
 
         // first chars correct
         query.term(searchQuery, {
           fields: ['symbol', 'entities', 'tags'],
-          boost: 2,
+          boost: 5,
           wildcard: lunr.Query.wildcard.TRAILING,
         })
 
@@ -70,7 +70,6 @@ export default new class {
         query.term(searchQuery, {
           fields: ['symbol', 'entities', 'tags'],
           editDistance: 1,
-          boost: 1,
         })
 
         query.term(searchQuery, {
