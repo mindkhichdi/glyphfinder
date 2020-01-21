@@ -10,6 +10,9 @@ export default {
   data() {
     return {
       selectedIndex: 0,
+      startRow: 0,
+      showRows: 8,
+      itemsPerRow: 5,
     }
   },
 
@@ -31,6 +34,21 @@ export default {
     Object.defineProperty(navigatable, 'selectedGlyph', {
       enumerable: true,
       get: () => this.selectedGlyph,
+    })
+
+    Object.defineProperty(navigatable, 'startRow', {
+      enumerable: true,
+      get: () => this.startRow,
+    })
+
+    Object.defineProperty(navigatable, 'showRows', {
+      enumerable: true,
+      get: () => this.showRows,
+    })
+
+    Object.defineProperty(navigatable, 'itemsPerRow', {
+      enumerable: true,
+      get: () => this.itemsPerRow,
     })
 
     return { navigatable }
@@ -61,6 +79,7 @@ export default {
 
       if (key === 'ArrowDown') {
         this.changeIndex(5)
+        // this.startRow = this.startRow + 1
       } else if (key === 'ArrowUp') {
         this.changeIndex(-5)
       } else if (key === 'ArrowRight') {
