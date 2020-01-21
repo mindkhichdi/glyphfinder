@@ -9,8 +9,18 @@ export default {
 
   data() {
     return {
-      selectedGlyph: null,
+      selectedIndex: 0,
     }
+  },
+
+  computed: {
+    selectedGlyph() {
+      if ((this.glyphs.length - 1) < this.selectedIndex) {
+        return null
+      }
+
+      return this.glyphs[this.selectedIndex]
+    },
   },
 
   provide() {
@@ -28,15 +38,45 @@ export default {
     glyphs: {
       immediate: true,
       handler() {
-        if (!this.glyphs.length) {
-          return
-        }
-
-        const [firstGlyph] = this.glyphs
-
-        this.selectedGlyph = firstGlyph
+        this.selectedIndex = 0
       },
     },
+  },
+
+  methods: {
+    handleKeyDown(event) {
+      const { key } = event
+
+      if (key.startsWith('Arrow')) {
+        event.preventDefault()
+      }
+
+      if (key === 'ArrowDown') {
+        this.changeIndex(5)
+      } else if (key === 'ArrowUp') {
+        this.changeIndex(-5)
+      } else if (key === 'ArrowRight') {
+        this.changeIndex(1)
+      } else if (key === 'ArrowLeft') {
+        this.changeIndex(-1)
+      }
+    },
+
+    changeIndex(change = 0) {
+      const min = 0
+      const max = this.glyphs.length - 1
+      const newIndex = Math.min(Math.max(parseInt(this.selectedIndex + change, 10), min), max)
+
+      this.selectedIndex = newIndex
+    },
+  },
+
+  mounted() {
+    document.addEventListener('keydown', this.handleKeyDown)
+  },
+
+  beforeDestroy() {
+    document.removeEventListener('keydown', this.handleKeyDown)
   },
 
   render() {
