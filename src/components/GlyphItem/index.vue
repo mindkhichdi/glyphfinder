@@ -3,7 +3,6 @@
     class="glyph-item"
     :class="{ 'is-active': isSelected }"
     type="button"
-    @keydown.enter="copyToClipboard"
     @click="handleClick"
     @dblclick="copyToClipboard"
     :title="glyph.name"
@@ -36,6 +35,7 @@ export default {
   methods: {
     copyToClipboard() {
       const copied = copy(this.glyph.symbol)
+
       if (copied) {
         console.log('copied', this.glyph)
       } else {
@@ -46,6 +46,20 @@ export default {
     handleClick() {
       this.navigatable.selectGlyph(this.glyph)
     },
+
+    handleKeyDown(event) {
+      if (this.isSelected && event.key === 'Enter') {
+        this.copyToClipboard()
+      }
+    },
+  },
+
+  mounted() {
+    document.addEventListener('keydown', this.handleKeyDown)
+  },
+
+  beforeDestroy() {
+    document.removeEventListener('keydown', this.handleKeyDown)
   },
 }
 </script>
