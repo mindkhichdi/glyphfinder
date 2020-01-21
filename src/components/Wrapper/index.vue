@@ -35,7 +35,11 @@ export default {
 
   computed: {
     results() {
-      return Glyphs.search(this.query)
+      const glyphs = Glyphs.search(this.query)
+
+      console.log(Glyphs.getRows(glyphs, 5))
+
+      return glyphs
     },
   },
 }

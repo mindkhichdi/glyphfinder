@@ -47,6 +47,12 @@ export default new class {
       .toArray()
   }
 
+  getRows(glyphs = [], count) {
+    return collect(glyphs)
+      .chunk(count)
+      .toArray()
+  }
+
   search(searchQuery = null) {
     const filteredQuery = searchQuery ? searchQuery.toLowerCase().trim() : ''
 
