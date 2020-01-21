@@ -4,6 +4,7 @@
     :class="{ 'is-active': isSelected }"
     type="button"
     @keydown.enter="copyToClipboard"
+    @click="handleClick"
     @dblclick="copyToClipboard"
     :title="glyph.name"
   >
@@ -40,6 +41,10 @@ export default {
       } else {
         console.log('copy failed')
       }
+    },
+
+    handleClick() {
+      this.navigatable.selectGlyph(this.glyph)
     },
   },
 }
