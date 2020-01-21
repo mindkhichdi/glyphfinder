@@ -31,13 +31,7 @@ export default {
 
   computed: {
     results() {
-      console.log(Glyphs.items)
-      return Glyphs.items
-      // const glyphs = Glyphs.search(this.query)
-
-      // console.log(Glyphs.getRows(glyphs, 5))
-
-      // return glyphs
+      return Glyphs.search(this.query)
     },
   },
 }

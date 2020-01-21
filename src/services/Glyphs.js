@@ -1,53 +1,49 @@
-// import collect from 'collect.js'
-// import lunr from 'lunr'
-// import data from '@/data.yaml'
+import FlexSearch from 'flexsearch'
 import data from '../generator/dist/data.json'
 
 export default new class {
 
   constructor() {
-    // this.items = this.buildItems(data)
-    this.items = data
+    this.index = new FlexSearch({
+      doc: {
+        id: 'symbol',
+        field: [
+          'symbol',
+          'name',
+          'tags',
+        ],
+      },
+      tokenize(str) {
+        const words = str.match(/\S+/g) || []
 
-    // this.idx = lunr(builder => {
-    //   builder.pipeline.remove(lunr.trimmer)
-    //   builder.pipeline.remove(lunr.stemmer)
-    //   builder.pipeline.remove(lunr.stopWordFilter)
+        return words
+          .map(word => {
+            const isWordWithHyphens = /^((?:\w+-)+\w+)$/.test(word)
 
-    //   builder.ref('symbol')
-    //   builder.field('symbol')
-    //   builder.field('entities')
-    //   builder.field('tags')
-    //   builder.field('alts')
-    //   builder.field('description')
+            if (isWordWithHyphens) {
+              return word.split('-')
+            }
 
-    //   this.items.forEach(glyph => builder.add(glyph))
-    // })
+            return word
+          })
+          .flat()
+          .map(word => {
+            const tokens = []
+
+            for (let i = 0; i < word.length; i += 1) {
+              tokens.push(word.slice(0, i + 1))
+            }
+
+            return tokens
+          })
+          .flat()
+      },
+    })
+
+    this.index.add(data)
+
+    console.log(this.index.info())
   }
-
-  // buildItems(items) {
-  //   // return collect(items)
-  //   //   .map(glyph => {
-  //   //     const unfilteredTags = glyph.tags
-  //   //     const [tags, alts] = collect(unfilteredTags)
-  //   //       .partition(item => {
-  //   //         const isWord = /^\w{2,}$/.test(item) // min 2 letters
-  //   //         const isWordWithHyphens = /^((?:\w+-)+\w+)$/.test(item)
-
-  //   //         return isWord || isWordWithHyphens
-  //   //       })
-  //   //       .toArray()
-
-  //   //     return {
-  //   //       ...glyph,
-  //   //       unfilteredTags,
-  //   //       tags,
-  //   //       alts,
-  //   //     }
-  //   //   })
-  //   //   .sortBy(glyph => glyph.symbol)
-  //   //   .toArray()
-  // }
 
   // getRows(glyphs = [], count) {
   //   return collect(glyphs)
@@ -55,43 +51,16 @@ export default new class {
   //     .toArray()
   // }
 
-  // search(searchQuery = null) {
-  //   // const filteredQuery = searchQuery ? searchQuery.toLowerCase().trim() : ''
+  search(query = null) {
+    const filteredQuery = query ? query.toLowerCase().trim() : ''
 
-  //   // if (filteredQuery === '') {
-  //   //   return this.items
-  //   // }
+    if (filteredQuery === '') {
+      return data
+    }
 
-  //   // return this.idx
-  //   //   .query(query => {
-  //   //     // exact match
-  //   //     query.term(filteredQuery, {
-  //   //       fields: ['symbol', 'entities', 'alts', 'tags'],
-  //   //       boost: 10,
-  //   //     })
-
-  //   //     // first chars correct
-  //   //     query.term(filteredQuery, {
-  //   //       fields: ['symbol', 'entities', 'tags'],
-  //   //       boost: 5,
-  //   //       wildcard: lunr.Query.wildcard.TRAILING,
-  //   //     })
-
-  //   //     // fuzzy
-  //   //     query.term(filteredQuery, {
-  //   //       fields: ['symbol', 'entities', 'tags'],
-  //   //       editDistance: 1,
-  //   //     })
-
-  //   //     query.term(filteredQuery, {
-  //   //       fields: ['description'],
-  //   //       wildcard: lunr.Query.wildcard.TRAILING,
-  //   //     })
-  //   //   })
-  //   //   .map(item => ({
-  //   //     ...this.items.find(glyph => glyph.symbol === item.ref),
-  //   //     score: item.score,
-  //   //   }))
-  // }
+    return this.index.search(filteredQuery, {
+      limit: 100000,
+    })
+  }
 
 }()
