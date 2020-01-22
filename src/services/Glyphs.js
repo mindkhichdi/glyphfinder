@@ -5,6 +5,7 @@ export default new class {
 
   constructor() {
     this.index = new FlexSearch({
+      cache: true,
       doc: {
         id: 'symbol',
         field: [
@@ -13,31 +14,7 @@ export default new class {
           'tags',
         ],
       },
-      tokenize(str) {
-        const words = str.match(/\S+/g) || []
-
-        return words
-          .map(word => {
-            const isWordWithHyphens = /^((?:\w+-)+\w+)$/.test(word)
-
-            if (isWordWithHyphens) {
-              return word.split('-')
-            }
-
-            return word
-          })
-          .flat()
-          .map(word => {
-            const tokens = []
-
-            for (let i = 0; i < word.length; i += 1) {
-              tokens.push(word.slice(0, i + 1))
-            }
-
-            return tokens
-          })
-          .flat()
-      },
+      tokenize: this.tokenize,
     })
 
     this.index.add(data)
@@ -45,11 +22,31 @@ export default new class {
     console.log(this.index.info())
   }
 
-  // getRows(glyphs = [], count) {
-  //   return collect(glyphs)
-  //     .chunk(count)
-  //     .toArray()
-  // }
+  tokenize(value) {
+    const words = value.match(/\S+/g) || []
+
+    return words
+      .map(word => {
+        const isWordWithHyphens = /^((?:\w+-)+\w+)$/.test(word)
+
+        if (isWordWithHyphens) {
+          return word.split('-')
+        }
+
+        return word
+      })
+      .flat()
+      .map(word => {
+        const tokens = []
+
+        for (let i = 0; i < word.length; i += 1) {
+          tokens.push(word.slice(0, i + 1))
+        }
+
+        return tokens
+      })
+      .flat()
+  }
 
   search(query = null) {
     const filteredQuery = query ? query.toLowerCase().trim() : ''
