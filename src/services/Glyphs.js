@@ -12,6 +12,8 @@ export default new class {
           'symbol',
           'name',
           'tags',
+          'entities',
+          'category',
         ],
       },
       tokenize: this.tokenize,
