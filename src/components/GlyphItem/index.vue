@@ -1,7 +1,10 @@
 <template>
   <button
     class="glyph-item"
-    :class="{ 'is-active': isSelected }"
+    :class="{
+      'is-active': isSelected,
+      'is-emoji': isEmoji,
+    }"
     type="button"
     @click="handleClick"
     @dblclick="copyToClipboard"
@@ -29,6 +32,10 @@ export default {
       return this.navigatable.selectedGlyph
         ? this.navigatable.selectedGlyph.symbol === this.glyph.symbol
         : false
+    },
+
+    isEmoji() {
+      return this.glyph.tags.includes('emoji')
     },
   },
 
