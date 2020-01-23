@@ -15,11 +15,11 @@ export default new class {
           },
           words: {
             tokenize: 'forward',
+            // tokenize: this.tokenize,
           },
         },
       },
       split: ' ',
-      tokenize: this.tokenize,
     })
 
     const formattedData = data.map(item => {
