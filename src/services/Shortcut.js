@@ -30,15 +30,15 @@ export default new class {
         }
 
         if (key.withAltGr === symbol) {
-          return ['Alt', key.value]
+          return ['⌥', key.value]
         }
 
         if (key.withShift === symbol) {
-          return ['Shift', key.value]
+          return ['⇧', key.value]
         }
 
         if (key.withShiftAltGr === symbol) {
-          return ['Shift', 'Alt', key.value]
+          return ['⇧', '⌥', key.value]
         }
 
         return null
