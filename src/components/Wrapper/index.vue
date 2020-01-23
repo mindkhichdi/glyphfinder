@@ -4,9 +4,11 @@
       <div class="wrapper__header">
         <input
           class="wrapper__search"
+          ref="search"
           type="text"
           autofocus
           v-model="query"
+          @blur="onBlurInput"
         >
       </div>
       <div class="wrapper__content">
@@ -39,6 +41,16 @@ export default {
   computed: {
     glyphs() {
       return Glyphs.search(this.query)
+    },
+  },
+
+  methods: {
+    onBlurInput() {
+      this.$nextTick(() => {
+        if (this.$refs.search) {
+          this.$refs.search.focus()
+        }
+      })
     },
   },
 }
