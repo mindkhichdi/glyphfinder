@@ -11,11 +11,12 @@ export default new class {
         id: 'symbol',
         field: {
           signs: {
-            tokenize: str => str.split(' '),
+            // tokenize: str => str.split(' '),
+            tokenize: this.tokenize,
           },
           words: {
-            tokenize: 'forward',
-            // tokenize: this.tokenize,
+            // tokenize: 'forward',
+            tokenize: this.tokenize,
           },
         },
       },
@@ -49,31 +50,35 @@ export default new class {
     this.index.add(formattedData)
   }
 
-  // tokenize(value) {
-  //   const words = value.match(/\S+/g) || []
+  tokenize(value) {
+    const words = value.match(/\S+/g) || []
 
-  //   return words
-  //     .map(word => {
-  //       const isWordWithHyphens = /^((?:\w+-)+\w+)$/.test(word)
+    return words
+      .map(word => {
+        const isWordWithHyphens = /^((?:\w+-)+\w+)$/.test(word)
 
-  //       if (isWordWithHyphens) {
-  //         return word.split('-')
-  //       }
+        if (isWordWithHyphens) {
+          return word.split('-')
+        }
 
-  //       return word
-  //     })
-  //     .flat()
-  //     .map(word => {
-  //       const tokens = []
+        return word
+      })
+      .flat()
+      .map(word => {
+        if (word.length === 1) {
+          return [word]
+        }
 
-  //       for (let i = 0; i < word.length; i += 1) {
-  //         tokens.push(word.slice(0, i + 1))
-  //       }
+        const tokens = []
 
-  //       return tokens
-  //     })
-  //     .flat()
-  // }
+        for (let i = 0; i < word.length; i += 1) {
+          tokens.push(word.slice(0, i + 1))
+        }
+
+        return tokens.filter(token => token.length > 1)
+      })
+      .flat()
+  }
 
   search(query = null) {
     const filteredQuery = query ? query.toLowerCase().trim() : ''
