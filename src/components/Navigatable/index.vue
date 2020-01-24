@@ -8,7 +8,7 @@ export default {
   },
 
   data() {
-    const showRows = 7
+    const showRows = 8
 
     return {
       selectedIndex: 0,
