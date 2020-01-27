@@ -12,11 +12,11 @@ export default new class {
         field: {
           signs: {
             // tokenize: str => str.split(' '),
-            tokenize: this.tokenize,
+            tokenize: this.tokenize.bind(this),
           },
           words: {
             // tokenize: 'forward',
-            tokenize: this.tokenize,
+            tokenize: this.tokenize.bind(this),
           },
         },
       },
@@ -25,11 +25,7 @@ export default new class {
 
     const formattedData = data.map(item => {
       const [words, signs] = collect(item.tags.match(/\S+/g) || [])
-        .partition(str => {
-          const isWord = /^[a-zA-Z]+$/.test(str)
-          const isWordWithHyphens = /^((?:\w+-)+\w+)$/.test(str)
-          return isWord || isWordWithHyphens
-        })
+        .partition(str => this.isWord(str) || this.isWordWithHyphens(str))
         .toArray()
 
       return {
@@ -50,14 +46,20 @@ export default new class {
     this.index.add(formattedData)
   }
 
+  isWord(value) {
+    return /^[a-zA-Z0-9]+$/.test(value)
+  }
+
+  isWordWithHyphens(value) {
+    return /^((?:\w+-)+\w+)$/.test(value)
+  }
+
   tokenize(value) {
     const words = value.match(/\S+/g) || []
 
     return words
       .map(word => {
-        const isWordWithHyphens = /^((?:\w+-)+\w+)$/.test(word)
-
-        if (isWordWithHyphens) {
+        if (this.isWordWithHyphens(word)) {
           return word.split('-')
         }
 
@@ -75,7 +77,14 @@ export default new class {
           tokens.push(word.slice(0, i + 1))
         }
 
-        return tokens.filter(token => token.length > 1)
+        return tokens
+          .filter(token => {
+            if (this.isWord(token)) {
+              return token.length > 1
+            }
+
+            return true
+          })
       })
       .flat()
   }
