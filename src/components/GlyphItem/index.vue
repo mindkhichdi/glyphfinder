@@ -62,7 +62,15 @@ export default {
     },
 
     handleKeyDown(event) {
-      if (this.isSelected && event.key === 'Enter') {
+      if (!this.isSelected) {
+        return
+      }
+
+      if (
+        event.key === 'Enter'
+        || (this.isMac && event.key === 'c' && event.metaKey)
+        || (this.isWindows && event.key === 'c' && event.ctrlKey)
+      ) {
         this.copyToClipboard()
       }
     },
