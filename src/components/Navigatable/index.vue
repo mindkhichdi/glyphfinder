@@ -16,6 +16,7 @@ export default {
       showRows: 8,
       itemsPerRow: 5,
       rowHeight: 62,
+      titleRowHeight: 30,
       firstFullyVisibleRow: 0,
       lastFullyVisibleRow: 0,
       isExpanded: Store.get('expanded', false),
@@ -73,6 +74,11 @@ export default {
     Object.defineProperty(navigatable, 'rowHeight', {
       enumerable: true,
       get: () => this.rowHeight,
+    })
+
+    Object.defineProperty(navigatable, 'titleRowHeight', {
+      enumerable: true,
+      get: () => this.titleRowHeight,
     })
 
     Object.defineProperty(navigatable, 'isExpanded', {

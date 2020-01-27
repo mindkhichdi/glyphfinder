@@ -4,6 +4,7 @@
       :scrollelement="scrollelement"
       :start="navigatable.startRow"
       :size="navigatable.rowHeight"
+      :variable="getVariableHeight"
       :remain="navigatable.showRows"
       :item="rowComponent"
       :itemcount="rowsCount"
@@ -45,17 +46,37 @@ export default {
     },
 
     rows() {
-      return collect(this.glyphs)
+      const glyphRows = collect(this.glyphs)
         .chunk(this.navigatable.itemsPerRow)
+        .map(glyphs => ({
+          glyphs: glyphs.toArray(),
+        }))
         .toArray()
+
+      return [
+        {
+          title: 'Frequently used',
+        },
+        {
+          title: 'Glyphs',
+        },
+        ...glyphRows,
+      ]
     },
   },
 
   methods: {
-    getItemProps(itemIndex) {
+    getVariableHeight(index) {
+      return this.rows[index].title
+        ? this.navigatable.titleRowHeight
+        : this.navigatable.rowHeight
+    },
+
+    getItemProps(index) {
       return {
         props: {
-          glyphs: this.rows[itemIndex],
+          title: this.rows[index].title,
+          glyphs: this.rows[index].glyphs,
         },
       }
     },
