@@ -11,16 +11,13 @@ export default new class {
         id: 'symbol',
         field: {
           signs: {
-            // tokenize: str => str.split(' '),
             tokenize: this.tokenize.bind(this),
           },
           words: {
-            // tokenize: 'forward',
             tokenize: this.tokenize.bind(this),
           },
         },
       },
-      split: ' ',
     })
 
     const formattedData = data.map(item => {
@@ -100,15 +97,6 @@ export default new class {
       query: filteredQuery,
       limit: 100000,
     })
-    // return this.index.search([{
-    //   field: 'signs',
-    //   query: filteredQuery,
-    //   bool: 'and',
-    // }, {
-    //   field: 'words',
-    //   query: filteredQuery,
-    //   bool: 'or',
-    // }])
   }
 
 }()
