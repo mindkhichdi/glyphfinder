@@ -18,6 +18,7 @@
 import collect from 'collect.js'
 import VirtualList from 'vue-virtual-scroll-list'
 import GlyphRow from '@/components/GlyphRow'
+import Store from '@/services/Store'
 
 export default {
   inject: ['navigatable'],
@@ -37,6 +38,7 @@ export default {
     return {
       rowComponent: GlyphRow,
       scrollelement: null,
+      usage: Store.get('usage', []),
     }
   },
 
@@ -45,18 +47,28 @@ export default {
       return this.rows.length
     },
 
+    frequentlyUsedGlyphs() {
+      return collect(this.usage)
+        .sortByDesc('count')
+        .map(item => this.glyphs.find(glyph => glyph.symbol === item.symbol))
+        .take(10)
+        .toArray()
+    },
+
     rows() {
       const allGlyphRows = this.chunkGlyphs(this.glyphs)
-      const frequentlyUsedGlyphRows = this.chunkGlyphs([])
+      const frequentlyUsedGlyphRows = this.chunkGlyphs(this.frequentlyUsedGlyphs)
 
       return [
-        {
-          title: 'Frequently used',
-        },
-        ...frequentlyUsedGlyphRows,
-        {
-          title: 'Glyphs',
-        },
+        ...(this.frequentlyUsedGlyphs.length ? [
+          {
+            title: 'Frequently used',
+          },
+          ...frequentlyUsedGlyphRows,
+          {
+            title: 'Glyphs',
+          },
+        ] : []),
         ...allGlyphRows,
       ]
     },
