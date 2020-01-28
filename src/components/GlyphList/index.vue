@@ -54,7 +54,10 @@ export default {
 
     getItemProps(index) {
       return {
-        props: this.rows[index],
+        props: {
+          ...this.rows[index],
+          y: index,
+        },
       }
     },
 

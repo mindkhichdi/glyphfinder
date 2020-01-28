@@ -12,14 +12,17 @@ export default {
 
   data() {
     return {
-      selectedIndex: 0,
+      selection: {
+        x: 0,
+        y: 0,
+      },
       startRow: 0,
       showRows: 8,
       itemsPerRow: 5,
       glyphRowHeight: 62,
       glyphRowWithTitleHeight: 92,
-      firstFullyVisibleRow: 0,
-      lastFullyVisibleRow: 0,
+      firstFullyVisibleRowIndex: 0,
+      lastFullyVisibleRowIndex: 0,
       isExpanded: Store.get('expanded', false),
       usage: Store.get('usage', []),
       scrollPosition: {
@@ -109,19 +112,11 @@ export default {
     },
 
     selectedGlyph() {
-      if ((this.formattedGlyphs.length - 1) < this.selectedIndex) {
-        return null
-      }
+      const { x, y } = this.selection
+      const row = this.rows[y]
+      const glyph = row.glyphs[x]
 
-      return this.formattedGlyphs[this.selectedIndex]
-    },
-
-    selectedRow() {
-      return Math.floor(this.selectedIndex / this.itemsPerRow)
-    },
-
-    visibleRows() {
-      return this.showRows - (this.isExpanded ? 2 : 1)
+      return glyph
     },
   },
 
@@ -129,8 +124,11 @@ export default {
     glyphs: {
       immediate: true,
       handler() {
-        this.selectedIndex = 0
         this.startRow = 0
+        this.selection = {
+          x: 0,
+          y: 0,
+        }
       },
     },
   },
@@ -158,52 +156,38 @@ export default {
     },
 
     updateVisibleRows() {
-      // this.firstFullyVisibleRow = Math.ceil(this.scrollPosition.offset / this.glyphRowHeight)
-
-      // const firstVisibleRow = Math.floor(this.scrollPosition.offset / this.glyphRowHeight)
-      // const scrolledOverFirstRow = this.scrollPosition.offset
-      //   - firstVisibleRow
-      //   * this.glyphRowHeight
-
-      // this.lastFullyVisibleRow = this.firstFullyVisibleRow
-      //   + this.visibleRows
-      //   - (scrolledOverFirstRow > 0 ? 2 : 1)
-
-      // console.log('updateVisibleRows')
-      // console.log(this.scrollPosition)
-
-      const containerHeight = 506 - 100
-
+      const containerHeight = 506 // TODO
+      const visibleScrollHeight = containerHeight - (this.isExpanded ? 101 : 54)
       const firstFullyVisibleRow = collect(this.offsets)
         .filter(item => item.offset >= this.scrollPosition.offset)
         .first()
 
-      this.firstFullyVisibleRow = firstFullyVisibleRow.index
+      this.firstFullyVisibleRowIndex = firstFullyVisibleRow.index
 
       const lastFullyVisibleRow = collect(this.offsets)
-        .filter(item => item.offset <= (this.scrollPosition.offset + containerHeight))
+        .filter(item => item.offset <= (this.scrollPosition.offset + visibleScrollHeight))
         .last()
 
-      this.lastFullyVisibleRow = lastFullyVisibleRow.index
-
-      console.log(this.firstFullyVisibleRow, this.lastFullyVisibleRow)
-
-      // console.log(lastFullyVisibleRow)
-
+      this.lastFullyVisibleRowIndex = lastFullyVisibleRow.index - 1
     },
 
     maybeUpdateStartRow() {
-      if (this.selectedRow < this.firstFullyVisibleRow) {
-        this.startRow = Math.max(this.startRow - this.visibleRows, 0)
+      const { y } = this.selection
+
+      if (y < this.firstFullyVisibleRowIndex) {
+        this.startRow = Math.max(this.startRow - 1, 0)
       }
 
-      if (this.selectedRow > this.lastFullyVisibleRow) {
-        this.startRow = this.selectedRow
+      if (y > this.lastFullyVisibleRowIndex) {
+        this.startRow = y
       }
     },
 
-    selectGlyph(glyph) {
-      this.selectedIndex = this.formattedGlyphs.findIndex(item => item.id === glyph.id)
+    setSelection(x, y) {
+      this.selection = {
+        x,
+        y,
+      }
     },
 
     handleKeyDown(event) {
@@ -214,22 +198,72 @@ export default {
       }
 
       if (key === 'ArrowDown') {
-        this.changeIndex(this.itemsPerRow)
+        this.updateSelection('down')
       } else if (key === 'ArrowUp') {
-        this.changeIndex(-this.itemsPerRow)
+        this.updateSelection('up')
       } else if (key === 'ArrowRight') {
-        this.changeIndex(1)
+        this.updateSelection('right')
       } else if (key === 'ArrowLeft') {
-        this.changeIndex(-1)
+        this.updateSelection('left')
       }
     },
 
-    changeIndex(change = 0) {
-      const min = 0
-      const max = this.formattedGlyphs.length - 1
-      const newIndex = Math.min(Math.max(parseInt(this.selectedIndex + change, 10), min), max)
+    updateSelection(direction) {
+      const { x, y } = this.selection
+      const row = this.rows[y]
 
-      this.selectedIndex = newIndex
+      if (direction === 'right') {
+        if (row.glyphs[x + 1]) {
+          this.selection = {
+            x: x + 1,
+            y,
+          }
+        } else if (this.rows[y + 1]) {
+          this.selection = {
+            x: 0,
+            y: y + 1,
+          }
+        }
+      } else if (direction === 'left') {
+        if (row.glyphs[x - 1]) {
+          this.selection = {
+            x: x - 1,
+            y,
+          }
+        } else if (this.rows[y - 1]) {
+          this.selection = {
+            x: this.rows[y - 1].glyphs.length - 1,
+            y: y - 1,
+          }
+        }
+      } else if (direction === 'down') {
+        const newRow = this.rows[y + 1]
+        if (newRow && newRow.glyphs[x]) {
+          this.selection = {
+            x,
+            y: y + 1,
+          }
+        } else if (newRow) {
+          this.selection = {
+            x: newRow.glyphs.length - 1,
+            y: y + 1,
+          }
+        }
+      } else if (direction === 'up') {
+        const newRow = this.rows[y - 1]
+        if (newRow && newRow.glyphs[x]) {
+          this.selection = {
+            x,
+            y: y - 1,
+          }
+        } else if (newRow) {
+          this.selection = {
+            x: newRow.glyphs.length - 1,
+            y: y - 1,
+          }
+        }
+      }
+
       this.maybeUpdateStartRow()
     },
   },
@@ -245,7 +279,7 @@ export default {
 
   provide() {
     const navigatable = {
-      selectGlyph: this.selectGlyph,
+      setSelection: this.setSelection,
       handleScroll: this.handleScroll,
       toggleExpand: this.toggleExpand,
     }
