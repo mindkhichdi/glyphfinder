@@ -179,13 +179,17 @@ export default {
         .filter(item => item.offset >= this.scrollPosition.offset)
         .first()
 
-      this.firstFullyVisibleRowIndex = firstFullyVisibleRow.index
+      if (firstFullyVisibleRow) {
+        this.firstFullyVisibleRowIndex = firstFullyVisibleRow.index
+      }
 
       const lastFullyVisibleRow = collect(this.offsets)
         .filter(item => item.offset <= (this.scrollPosition.offset + visibleScrollHeight))
         .last()
 
-      this.lastFullyVisibleRowIndex = lastFullyVisibleRow.index - 1
+      if (lastFullyVisibleRow) {
+        this.lastFullyVisibleRowIndex = lastFullyVisibleRow.index - 1
+      }
     },
 
     maybeUpdateStartRow() {
