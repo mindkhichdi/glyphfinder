@@ -87,6 +87,26 @@ export default {
       ]
     },
 
+    offsets() {
+      const offsets = []
+      let offset = 0
+
+      this.rows.forEach(row => {
+        const size = row.title
+          ? this.glyphRowWithTitleHeight
+          : this.glyphRowHeight
+
+        offsets.push({
+          size,
+          offset,
+        })
+
+        offset += size
+      })
+
+      return offsets
+    },
+
     selectedGlyph() {
       if ((this.formattedGlyphs.length - 1) < this.selectedIndex) {
         return null
