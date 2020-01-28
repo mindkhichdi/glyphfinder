@@ -163,14 +163,15 @@ export default {
         }
 
         this.updateVisibleRows()
-
-        // force re-render to 0
-        this.startRow = 1
-        this.$nextTick(() => {
-          this.startRow = 0
-        })
+        this.maybeUpdateStartRow()
       },
     },
+    // startRow: {
+    //   immediate: true,
+    //   handler(newV, oldV) {
+    //     console.log('startRow', oldV, newV)
+    //   },
+    // },
   },
 
   methods: {
@@ -218,12 +219,11 @@ export default {
     maybeUpdateStartRow() {
       const { y } = this.selection
 
-      if (y < this.firstFullyVisibleRowIndex) {
-        this.startRow = Math.max(this.firstFullyVisibleRowIndex - 1, 0)
-      }
-
-      if (y > this.lastFullyVisibleRowIndex) {
-        this.startRow = y
+      if (y < this.firstFullyVisibleRowIndex || y > this.lastFullyVisibleRowIndex) {
+        this.startRow = Math.max(y - 1, 0)
+        this.$nextTick(() => {
+          this.startRow = y
+        })
       }
     },
 
