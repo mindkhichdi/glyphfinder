@@ -17,7 +17,7 @@ export default {
       showRows: 8,
       itemsPerRow: 5,
       glyphRowHeight: 62,
-      titleRowHeight: 30,
+      glyphRowWithTitleHeight: 92,
       firstFullyVisibleRow: 0,
       lastFullyVisibleRow: 0,
       isExpanded: Store.get('expanded', false),
@@ -54,23 +54,35 @@ export default {
 
     glyphRows() {
       return this.chunkGlyphs(this.formattedGlyphs)
+        .map((row, index) => {
+          if (index === 0 && this.hasFrequentlyUsedGlyphs) {
+            return {
+              title: 'Glyphs',
+              ...row,
+            }
+          }
+
+          return row
+        })
     },
 
     frequentlyUsedGlyphRows() {
       return this.chunkGlyphs(this.frequentlyUsedGlyphs)
+        .map((row, index) => {
+          if (index === 0) {
+            return {
+              title: 'Frequently used',
+              ...row,
+            }
+          }
+
+          return row
+        })
     },
 
     rows() {
       return [
-        ...(this.hasFrequentlyUsedGlyphs ? [
-          {
-            title: 'Frequently used',
-          },
-          ...this.frequentlyUsedGlyphRows,
-          {
-            title: 'Glyphs',
-          },
-        ] : []),
+        ...this.frequentlyUsedGlyphRows,
         ...this.glyphRows,
       ]
     },
@@ -216,9 +228,9 @@ export default {
         enumerable: true,
         get: () => this.glyphRowHeight,
       },
-      titleRowHeight: {
+      glyphRowWithTitleHeight: {
         enumerable: true,
-        get: () => this.titleRowHeight,
+        get: () => this.glyphRowWithTitleHeight,
       },
       isExpanded: {
         enumerable: true,
