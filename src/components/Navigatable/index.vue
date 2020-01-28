@@ -79,39 +79,35 @@ export default {
       toggleExpand: this.toggleExpand,
     }
 
-    Object.defineProperty(navigatable, 'selectedGlyph', {
-      enumerable: true,
-      get: () => this.selectedGlyph,
-    })
-
-    Object.defineProperty(navigatable, 'startRow', {
-      enumerable: true,
-      get: () => this.startRow,
-    })
-
-    Object.defineProperty(navigatable, 'showRows', {
-      enumerable: true,
-      get: () => this.showRows,
-    })
-
-    Object.defineProperty(navigatable, 'itemsPerRow', {
-      enumerable: true,
-      get: () => this.itemsPerRow,
-    })
-
-    Object.defineProperty(navigatable, 'glyphRowHeight', {
-      enumerable: true,
-      get: () => this.glyphRowHeight,
-    })
-
-    Object.defineProperty(navigatable, 'titleRowHeight', {
-      enumerable: true,
-      get: () => this.titleRowHeight,
-    })
-
-    Object.defineProperty(navigatable, 'isExpanded', {
-      enumerable: true,
-      get: () => this.isExpanded,
+    Object.defineProperties(navigatable, {
+      selectedGlyph: {
+        enumerable: true,
+        get: () => this.selectedGlyph,
+      },
+      startRow: {
+        enumerable: true,
+        get: () => this.startRow,
+      },
+      showRows: {
+        enumerable: true,
+        get: () => this.showRows,
+      },
+      itemsPerRow: {
+        enumerable: true,
+        get: () => this.itemsPerRow,
+      },
+      glyphRowHeight: {
+        enumerable: true,
+        get: () => this.glyphRowHeight,
+      },
+      titleRowHeight: {
+        enumerable: true,
+        get: () => this.titleRowHeight,
+      },
+      isExpanded: {
+        enumerable: true,
+        get: () => this.isExpanded,
+      },
     })
 
     return { navigatable }
