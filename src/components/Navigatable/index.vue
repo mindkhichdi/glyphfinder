@@ -1,4 +1,5 @@
 <script>
+import collect from 'collect.js'
 import Store from '@/services/Store'
 
 export default {
@@ -15,11 +16,12 @@ export default {
       startRow: 0,
       showRows: 8,
       itemsPerRow: 5,
-      rowHeight: 62,
+      glyphRowHeight: 62,
       titleRowHeight: 30,
       firstFullyVisibleRow: 0,
       lastFullyVisibleRow: 0,
       isExpanded: Store.get('expanded', false),
+      usage: Store.get('usage', []),
       scrollPosition: {
         offset: 0,
       },
@@ -27,6 +29,32 @@ export default {
   },
 
   computed: {
+    frequentlyUsedGlyphs() {
+      return collect(this.usage)
+        .sortByDesc('count')
+        .map(item => this.glyphs.find(glyph => glyph.symbol === item.symbol))
+        .take(10)
+        .toArray()
+    },
+
+    rows() {
+      const allGlyphRows = this.chunkGlyphs(this.glyphs)
+      const frequentlyUsedGlyphRows = this.chunkGlyphs(this.frequentlyUsedGlyphs)
+
+      return [
+        ...(this.frequentlyUsedGlyphs.length ? [
+          {
+            title: 'Frequently used',
+          },
+          ...frequentlyUsedGlyphRows,
+          {
+            title: 'Glyphs',
+          },
+        ] : []),
+        ...allGlyphRows,
+      ]
+    },
+
     selectedGlyph() {
       if ((this.glyphs.length - 1) < this.selectedIndex) {
         return null
@@ -71,9 +99,9 @@ export default {
       get: () => this.itemsPerRow,
     })
 
-    Object.defineProperty(navigatable, 'rowHeight', {
+    Object.defineProperty(navigatable, 'glyphRowHeight', {
       enumerable: true,
-      get: () => this.rowHeight,
+      get: () => this.glyphRowHeight,
     })
 
     Object.defineProperty(navigatable, 'titleRowHeight', {
@@ -100,6 +128,16 @@ export default {
   },
 
   methods: {
+    chunkGlyphs(glyphs) {
+      return collect(glyphs)
+        .chunk(this.itemsPerRow)
+        .filter(items => items.toArray().length)
+        .map(items => ({
+          glyphs: items.toArray(),
+        }))
+        .toArray()
+    },
+
     toggleExpand() {
       this.isExpanded = !this.isExpanded
       Store.set('expanded', this.isExpanded)
@@ -112,10 +150,12 @@ export default {
     },
 
     updateVisibleRows() {
-      this.firstFullyVisibleRow = Math.ceil(this.scrollPosition.offset / this.rowHeight)
+      this.firstFullyVisibleRow = Math.ceil(this.scrollPosition.offset / this.glyphRowHeight)
 
-      const firstVisibleRow = Math.floor(this.scrollPosition.offset / this.rowHeight)
-      const scrolledOverFirstRow = this.scrollPosition.offset - firstVisibleRow * this.rowHeight
+      const firstVisibleRow = Math.floor(this.scrollPosition.offset / this.glyphRowHeight)
+      const scrolledOverFirstRow = this.scrollPosition.offset
+        - firstVisibleRow
+        * this.glyphRowHeight
 
       this.lastFullyVisibleRow = this.firstFullyVisibleRow
         + this.visibleRows
@@ -178,6 +218,7 @@ export default {
   render() {
     return this.$scopedSlots.default({
       selectedGlyph: this.selectedGlyph,
+      rows: this.rows,
     })
   },
 }

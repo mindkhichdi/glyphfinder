@@ -3,7 +3,7 @@
     <virtual-list
       :scrollelement="scrollelement"
       :start="navigatable.startRow"
-      :size="navigatable.rowHeight"
+      :size="navigatable.glyphRowHeight"
       :variable="getVariableHeight"
       :remain="navigatable.showRows"
       :item="rowComponent"
@@ -15,10 +15,8 @@
 </template>
 
 <script>
-import collect from 'collect.js'
 import VirtualList from 'vue-virtual-scroll-list'
 import GlyphRow from '@/components/GlyphRow'
-import Store from '@/services/Store'
 
 export default {
   inject: ['navigatable'],
@@ -28,7 +26,7 @@ export default {
   },
 
   props: {
-    glyphs: {
+    rows: {
       type: Array,
       default: () => ([]),
     },
@@ -38,7 +36,6 @@ export default {
     return {
       rowComponent: GlyphRow,
       scrollelement: null,
-      usage: Store.get('usage', []),
     }
   },
 
@@ -46,49 +43,13 @@ export default {
     rowsCount() {
       return this.rows.length
     },
-
-    frequentlyUsedGlyphs() {
-      return collect(this.usage)
-        .sortByDesc('count')
-        .map(item => this.glyphs.find(glyph => glyph.symbol === item.symbol))
-        .take(10)
-        .toArray()
-    },
-
-    rows() {
-      const allGlyphRows = this.chunkGlyphs(this.glyphs)
-      const frequentlyUsedGlyphRows = this.chunkGlyphs(this.frequentlyUsedGlyphs)
-
-      return [
-        ...(this.frequentlyUsedGlyphs.length ? [
-          {
-            title: 'Frequently used',
-          },
-          ...frequentlyUsedGlyphRows,
-          {
-            title: 'Glyphs',
-          },
-        ] : []),
-        ...allGlyphRows,
-      ]
-    },
   },
 
   methods: {
-    chunkGlyphs(glyphs) {
-      return collect(glyphs)
-        .chunk(this.navigatable.itemsPerRow)
-        .filter(items => items.toArray().length)
-        .map(items => ({
-          glyphs: items.toArray(),
-        }))
-        .toArray()
-    },
-
     getVariableHeight(index) {
       return this.rows[index].title
         ? this.navigatable.titleRowHeight
-        : this.navigatable.rowHeight
+        : this.navigatable.glyphRowHeight
     },
 
     getItemProps(index) {

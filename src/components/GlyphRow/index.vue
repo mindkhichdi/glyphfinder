@@ -38,7 +38,7 @@ export default {
     height() {
       return this.title
         ? this.navigatable.titleRowHeight
-        : this.navigatable.rowHeight
+        : this.navigatable.glyphRowHeight
     },
   },
 }
