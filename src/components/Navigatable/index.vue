@@ -37,21 +37,30 @@ export default {
         .toArray()
     },
 
-    rows() {
-      const allGlyphRows = this.chunkGlyphs(this.glyphs)
-      const frequentlyUsedGlyphRows = this.chunkGlyphs(this.frequentlyUsedGlyphs)
+    hasFrequentlyUsedGlyphs() {
+      return this.frequentlyUsedGlyphs.length
+    },
 
+    glyphRows() {
+      return this.chunkGlyphs(this.glyphs)
+    },
+
+    frequentlyUsedGlyphRows() {
+      return this.chunkGlyphs(this.frequentlyUsedGlyphs)
+    },
+
+    rows() {
       return [
-        ...(this.frequentlyUsedGlyphs.length ? [
+        ...(this.hasFrequentlyUsedGlyphs ? [
           {
             title: 'Frequently used',
           },
-          ...frequentlyUsedGlyphRows,
+          ...this.frequentlyUsedGlyphRows,
           {
             title: 'Glyphs',
           },
         ] : []),
-        ...allGlyphRows,
+        ...this.glyphRows,
       ]
     },
 
@@ -70,47 +79,6 @@ export default {
     visibleRows() {
       return this.showRows - (this.isExpanded ? 2 : 1)
     },
-  },
-
-  provide() {
-    const navigatable = {
-      selectGlyph: this.selectGlyph,
-      handleScroll: this.handleScroll,
-      toggleExpand: this.toggleExpand,
-    }
-
-    Object.defineProperties(navigatable, {
-      selectedGlyph: {
-        enumerable: true,
-        get: () => this.selectedGlyph,
-      },
-      startRow: {
-        enumerable: true,
-        get: () => this.startRow,
-      },
-      showRows: {
-        enumerable: true,
-        get: () => this.showRows,
-      },
-      itemsPerRow: {
-        enumerable: true,
-        get: () => this.itemsPerRow,
-      },
-      glyphRowHeight: {
-        enumerable: true,
-        get: () => this.glyphRowHeight,
-      },
-      titleRowHeight: {
-        enumerable: true,
-        get: () => this.titleRowHeight,
-      },
-      isExpanded: {
-        enumerable: true,
-        get: () => this.isExpanded,
-      },
-    })
-
-    return { navigatable }
   },
 
   watch: {
@@ -169,9 +137,7 @@ export default {
     },
 
     selectGlyph(glyph) {
-      const index = this.glyphs.findIndex(item => item.symbol === glyph.symbol)
-
-      this.selectedIndex = index
+      this.selectedIndex = this.glyphs.findIndex(item => item.symbol === glyph.symbol)
     },
 
     handleKeyDown(event) {
@@ -182,9 +148,9 @@ export default {
       }
 
       if (key === 'ArrowDown') {
-        this.changeIndex(5)
+        this.changeIndex(this.itemsPerRow)
       } else if (key === 'ArrowUp') {
-        this.changeIndex(-5)
+        this.changeIndex(-this.itemsPerRow)
       } else if (key === 'ArrowRight') {
         this.changeIndex(1)
       } else if (key === 'ArrowLeft') {
@@ -209,6 +175,47 @@ export default {
 
   beforeDestroy() {
     document.removeEventListener('keydown', this.handleKeyDown)
+  },
+
+  provide() {
+    const navigatable = {
+      selectGlyph: this.selectGlyph,
+      handleScroll: this.handleScroll,
+      toggleExpand: this.toggleExpand,
+    }
+
+    Object.defineProperties(navigatable, {
+      selectedGlyph: {
+        enumerable: true,
+        get: () => this.selectedGlyph,
+      },
+      startRow: {
+        enumerable: true,
+        get: () => this.startRow,
+      },
+      showRows: {
+        enumerable: true,
+        get: () => this.showRows,
+      },
+      itemsPerRow: {
+        enumerable: true,
+        get: () => this.itemsPerRow,
+      },
+      glyphRowHeight: {
+        enumerable: true,
+        get: () => this.glyphRowHeight,
+      },
+      titleRowHeight: {
+        enumerable: true,
+        get: () => this.titleRowHeight,
+      },
+      isExpanded: {
+        enumerable: true,
+        get: () => this.isExpanded,
+      },
+    })
+
+    return { navigatable }
   },
 
   render() {
