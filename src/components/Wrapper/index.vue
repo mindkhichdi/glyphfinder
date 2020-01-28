@@ -1,5 +1,9 @@
 <template>
-  <navigatable :glyphs="glyphs" v-slot="{ rows, selectedGlyph }">
+  <navigatable
+    :glyphs="glyphs"
+    :is-search="isSearch"
+    v-slot="{ rows, selectedGlyph }"
+  >
     <div class="wrapper">
       <div class="wrapper__header">
         <input
@@ -46,6 +50,10 @@ export default {
   computed: {
     glyphs() {
       return Glyphs.search(this.query)
+    },
+
+    isSearch() {
+      return this.query ? !!this.query.length : false
     },
   },
 
