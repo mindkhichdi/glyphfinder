@@ -141,11 +141,13 @@ export default {
     glyphs: {
       immediate: true,
       handler() {
-        this.startRow = 0
         this.selection = {
           x: 0,
           y: 0,
         }
+
+        this.updateVisibleRows()
+        this.maybeUpdateStartRow()
       },
     },
   },
@@ -196,7 +198,7 @@ export default {
       const { y } = this.selection
 
       if (y < this.firstFullyVisibleRowIndex) {
-        this.startRow = Math.max(this.startRow - 1, 0)
+        this.startRow = Math.max(this.firstFullyVisibleRowIndex - 1, 0)
       }
 
       if (y > this.lastFullyVisibleRowIndex) {
@@ -219,17 +221,17 @@ export default {
       }
 
       if (key === 'ArrowDown') {
-        this.updateSelection('down')
+        this.moveSelection('down')
       } else if (key === 'ArrowUp') {
-        this.updateSelection('up')
+        this.moveSelection('up')
       } else if (key === 'ArrowRight') {
-        this.updateSelection('right')
+        this.moveSelection('right')
       } else if (key === 'ArrowLeft') {
-        this.updateSelection('left')
+        this.moveSelection('left')
       }
     },
 
-    updateSelection(direction) {
+    moveSelection(direction) {
       const { x, y } = this.selection
       const row = this.rows[y]
 
