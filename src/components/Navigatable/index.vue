@@ -37,6 +37,10 @@ export default {
   },
 
   computed: {
+    isEmpty() {
+      return this.glyphs.length === 0
+    },
+
     formattedGlyphs() {
       return this.glyphs.map(glyph => ({
         ...glyph,
@@ -121,6 +125,10 @@ export default {
     },
 
     selectedGlyph() {
+      if (this.isEmpty) {
+        return null
+      }
+
       const { x, y } = this.selection
       const row = this.rows[y]
       const glyph = row.glyphs[x]
