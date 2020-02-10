@@ -29,6 +29,7 @@
 </template>
 
 <script>
+import { ipcRenderer } from 'electron'
 import GlyphList from '@/components/GlyphList'
 import GlyphData from '@/components/GlyphData'
 import Navigatable from '@/components/Navigatable'
@@ -65,6 +66,18 @@ export default {
         }
       })
     },
+
+    showPreferences() {
+      console.log('showPreferences')
+    },
+  },
+
+  mounted() {
+    ipcRenderer.on('showPreferences', this.showPreferences)
+  },
+
+  beforeDestroy() {
+    ipcRenderer.removeListener('showPreferences', this.showPreferences)
   },
 }
 </script>
