@@ -74,7 +74,7 @@ export default new class {
           tokens.push(word.slice(0, i + 1))
         }
 
-        return tokens
+        return collect(tokens)
           .filter(token => {
             if (this.isWord(token)) {
               return token.length > 1
@@ -82,6 +82,8 @@ export default new class {
 
             return true
           })
+          .reverse() // full words first
+          .toArray()
       })
       .flat()
   }
