@@ -1,22 +1,12 @@
 <script>
 import collect from 'collect.js'
 import Store from '@/services/Store'
+import Glyphs from '@/services/Glyphs'
 
 export default {
-  props: {
-    glyphs: {
-      type: Array,
-      default: () => ([]),
-    },
-
-    isSearch: {
-      type: Boolean,
-      default: false,
-    },
-  },
-
   data() {
     return {
+      query: '',
       selection: {
         x: 0,
         y: 0,
@@ -39,6 +29,14 @@ export default {
   },
 
   computed: {
+    glyphs() {
+      return Glyphs.search(this.query)
+    },
+
+    isSearch() {
+      return this.query ? !!this.query.length : false
+    },
+
     isEmpty() {
       return this.glyphs.length === 0
     },
@@ -168,6 +166,10 @@ export default {
   },
 
   methods: {
+    setQuery(query) {
+      this.query = query
+    },
+
     setElement(element) {
       this.element = element
     },
@@ -321,6 +323,7 @@ export default {
 
   provide() {
     const navigatable = {
+      setQuery: this.setQuery,
       setElement: this.setElement,
       setSelection: this.setSelection,
       handleScroll: this.handleScroll,
@@ -328,6 +331,10 @@ export default {
     }
 
     Object.defineProperties(navigatable, {
+      rows: {
+        enumerable: true,
+        get: () => this.rows,
+      },
       selectedGlyph: {
         enumerable: true,
         get: () => this.selectedGlyph,
@@ -362,10 +369,7 @@ export default {
   },
 
   render() {
-    return this.$scopedSlots.default({
-      selectedGlyph: this.selectedGlyph,
-      rows: this.rows,
-    })
+    return this.$scopedSlots.default()
   },
 }
 </script>
