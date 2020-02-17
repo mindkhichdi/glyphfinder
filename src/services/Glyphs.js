@@ -1,10 +1,18 @@
 import FlexSearch from 'flexsearch'
 import collect from 'collect.js'
-import data from '../data/data.json'
+import Store from './Store'
+import Event from './Event'
+// import data from '../data/data.json'
 
 export default new class {
 
   constructor() {
+    Event.on('supportedGlyphs', supportedGlyphs => {
+      this.data = supportedGlyphs
+    })
+
+    this.data = Store.get('supportedGlyphs', [])
+
     this.index = new FlexSearch({
       cache: true,
       doc: {
@@ -20,7 +28,7 @@ export default new class {
       },
     })
 
-    const formattedData = data.map(item => {
+    const formattedData = this.data.map(item => {
       const [words, signs] = collect(item.tags.match(/\S+/g) || [])
         .partition(str => this.isWord(str) || this.isWordWithHyphens(str))
         .toArray()
@@ -92,7 +100,7 @@ export default new class {
     const filteredQuery = query ? query.toLowerCase().trim() : ''
 
     if (filteredQuery === '') {
-      return data
+      return this.data
     }
 
     return this.index.search({
