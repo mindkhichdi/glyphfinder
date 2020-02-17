@@ -1,0 +1,54 @@
+.button {
+  display: inline-flex;
+  padding: 6px;
+  margin-left: 8px;
+  color: rgba($colorWhite, 0.5);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  border-radius: 6px;
+  background-color: rgba($colorWhite, 0.08);
+  transition: color 0.2s $ease, background-color 0.2s $ease;
+  -webkit-app-region: no-drag;
+
+  &:first-child {
+    margin-left: 0;
+  }
+
+  &:hover {
+    color: rgba($colorWhite, 1);
+    background-color: rgba($colorWhite, 0.12);
+  }
+
+  &.is-red {
+    background-color: $colorRed;
+    color: $colorBlack;
+
+    &:hover {
+      background-color: rgba($colorRed, 0.9);
+    }
+  }
+
+  &.is-red-text {
+    background-color: transparent;
+    color: $colorRed;
+    padding: 0;
+  }
+
+  &.is-grey-text {
+    background-color: transparent;
+
+    &:hover {
+      color: rgba($colorWhite, 1);
+      background-color: rgba($colorWhite, 0.12);
+    }
+  }
+
+  &__icon + &__content {
+    margin-left: 2px;
+  }
+
+  & + & {
+    margin-left: 6px;
+  }
+}
