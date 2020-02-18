@@ -72,6 +72,7 @@ export default {
   },
 
   mounted() {
+    console.timeEnd('mount')
     ipcRenderer.on('showPreferences', this.onShowPreferences)
     Event.on('hidePreferences', this.onHidePreferences)
     Event.on('hideGlyphCheck', this.onHideGlyphCheck)
