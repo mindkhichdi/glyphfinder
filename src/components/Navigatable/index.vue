@@ -1,12 +1,22 @@
 <script>
 import collect from 'collect.js'
 import Store from '@/services/Store'
-import Glyphs from '@/services/Glyphs'
 
 export default {
+  props: {
+    glyphs: {
+      type: Array,
+      default: () => ([]),
+    },
+
+    showFrequentlyUsedGlyphs: {
+      type: Boolean,
+      default: true,
+    },
+  },
+
   data() {
     return {
-      query: '',
       selection: {
         x: 0,
         y: 0,
@@ -28,14 +38,6 @@ export default {
   },
 
   computed: {
-    glyphs() {
-      return Glyphs.search(this.query)
-    },
-
-    isSearch() {
-      return this.query ? !!this.query.length : false
-    },
-
     isEmpty() {
       return this.glyphs.length === 0
     },
@@ -48,7 +50,7 @@ export default {
     },
 
     frequentlyUsedGlyphs() {
-      if (this.isSearch) {
+      if (!this.showFrequentlyUsedGlyphs) {
         return []
       }
 
@@ -70,7 +72,7 @@ export default {
     glyphRows() {
       return this.chunkGlyphs(this.formattedGlyphs)
         .map((row, index, array) => {
-          if (index === 0 && !this.isSearch && this.hasFrequentlyUsedGlyphs) {
+          if (index === 0 && this.hasFrequentlyUsedGlyphs) {
             return {
               ...row,
               title: 'Glyphs',
@@ -165,10 +167,6 @@ export default {
   },
 
   methods: {
-    setQuery(query) {
-      this.query = query
-    },
-
     setElement(element) {
       this.element = element
     },
@@ -326,7 +324,6 @@ export default {
 
   provide() {
     const navigatable = {
-      setQuery: this.setQuery,
       setElement: this.setElement,
       setSelection: this.setSelection,
       handleScroll: this.handleScroll,
@@ -368,7 +365,10 @@ export default {
   },
 
   render() {
-    return this.$scopedSlots.default()
+    return this.$scopedSlots.default({
+      rows: this.rows,
+      selectedGlyph: this.selectedGlyph,
+    })
   },
 }
 </script>
