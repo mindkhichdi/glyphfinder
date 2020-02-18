@@ -12,7 +12,6 @@ export default {
         y: 0,
       },
       element: null,
-      startRow: 0,
       showRows: 8,
       itemsPerRow: 5,
       glyphRowHeight: 62,
@@ -342,10 +341,6 @@ export default {
       selectedGlyph: {
         enumerable: true,
         get: () => this.selectedGlyph,
-      },
-      startRow: {
-        enumerable: true,
-        get: () => this.startRow,
       },
       showRows: {
         enumerable: true,
