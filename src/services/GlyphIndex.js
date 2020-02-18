@@ -42,11 +42,10 @@ export default new class {
   }
 
   createSearchIndex(glyphs = []) {
-    return new Glyphs(glyphs).createIndex().exportIndex()
-  }
-
-  exists() {
-    return !!this.getDB()
+    return Glyphs
+      .importGlyphs(glyphs)
+      .createIndex()
+      .exportIndex()
   }
 
   getDB() {
@@ -63,8 +62,8 @@ export default new class {
 
   createSupportedGlyphs() {
     return new Promise(resolve => {
-      const glyphs = collect(data).take(100).toArray()
-      // const glyphs = data
+      // const glyphs = collect(data).take(100).toArray()
+      const glyphs = data
       const glyphsCount = glyphs.length
       const supportedGlyphs = []
 

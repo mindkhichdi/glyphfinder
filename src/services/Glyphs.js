@@ -1,10 +1,10 @@
 import collect from 'collect.js'
 import FlexSearch from 'flexsearch'
 
-export default class Glyphs {
+export default new class {
 
-  constructor(data = []) {
-    this.data = data
+  constructor() {
+    this.data = []
     this.index = new FlexSearch({
       cache: true,
       doc: {
@@ -21,8 +21,16 @@ export default class Glyphs {
     })
   }
 
+  importGlyphs(data) {
+    this.data = data
+
+    return this
+  }
+
   importIndex(index) {
     this.index.import(index, { serialize: false })
+
+    return this
   }
 
   exportIndex() {
@@ -113,4 +121,4 @@ export default class Glyphs {
     })
   }
 
-}
+}()
