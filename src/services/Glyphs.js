@@ -1,18 +1,10 @@
-import FlexSearch from 'flexsearch'
 import collect from 'collect.js'
-import Store from './Store'
-import Event from './Event'
-// import data from '../data/data.json'
+import FlexSearch from 'flexsearch'
 
-export default new class {
+export default class Glyphs {
 
-  constructor() {
-    Event.on('supportedGlyphs', supportedGlyphs => {
-      this.data = supportedGlyphs
-    })
-
-    this.data = Store.get('supportedGlyphs', [])
-
+  constructor(data = []) {
+    this.data = data
     this.index = new FlexSearch({
       cache: true,
       doc: {
@@ -27,7 +19,17 @@ export default new class {
         },
       },
     })
+  }
 
+  importIndex(index) {
+    this.index.import(index, { serialize: false })
+  }
+
+  exportIndex() {
+    return this.index.export({ serialize: false })
+  }
+
+  createIndex() {
     const formattedData = this.data.map(item => {
       const [words, signs] = collect(item.tags.match(/\S+/g) || [])
         .partition(str => this.isWord(str) || this.isWordWithHyphens(str))
@@ -50,7 +52,7 @@ export default new class {
 
     this.index.add(formattedData)
 
-    // console.log(this.index.export())
+    return this
   }
 
   isWord(value) {
@@ -111,4 +113,4 @@ export default new class {
     })
   }
 
-}()
+}

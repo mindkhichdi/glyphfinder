@@ -2,11 +2,35 @@
 import collect from 'collect.js'
 import Store from '@/services/Store'
 import Glyphs from '@/services/Glyphs'
+import GlyphIndex from '@/services/GlyphIndex'
+
+
+// const { glyphs, searchIndex } = GlyphIndex.getDB()
+
+// const glyphIndex = new Glyphs(glyphs)
+
+// console.time('importIndex')
+// glyphIndex.importIndex(searchIndex)
+// console.timeEnd('importIndex')
+
+// console.time('createIndex')
+// glyphIndex.createIndex()
+// console.timeEnd('createIndex')
 
 export default {
+
+  props: {
+    glyphIndex: {
+      default: null,
+      // required: true,
+    },
+  },
+
   data() {
     return {
+      // glyphIndex: null,
       query: '',
+      glyphs: [],
       selection: {
         x: 0,
         y: 0,
@@ -29,9 +53,14 @@ export default {
   },
 
   computed: {
-    glyphs() {
-      return Glyphs.search(this.query)
-    },
+    // glyphs() {
+    //   // console.log('computed glyphs')
+
+    //   return this.glyphIndex.search(this.query)
+    //   // return this.glyphIndex
+    //   //   ? this.glyphIndex.search(this.query)
+    //   //   : []
+    // },
 
     isSearch() {
       return this.query ? !!this.query.length : false
@@ -151,6 +180,13 @@ export default {
   },
 
   watch: {
+    query: {
+      immediate: true,
+      handler() {
+        this.updateGlyphs()
+      },
+    },
+
     glyphs: {
       immediate: true,
       handler() {
@@ -166,6 +202,15 @@ export default {
   },
 
   methods: {
+    updateGlyphs() {
+      if (!this.glyphIndex) {
+        this.glyphs = []
+        return
+      }
+
+      this.glyphs = this.glyphIndex.search(this.query)
+    },
+
     setQuery(query) {
       this.query = query
     },
@@ -314,6 +359,18 @@ export default {
 
       this.maybeUpdateScrollPosition()
     },
+  },
+
+  created() {
+    // const { glyphs, searchIndex } = GlyphIndex.getDB()
+
+    // const glyphIndex = new Glyphs(glyphs)
+    // glyphIndex.importIndex(searchIndex)
+
+    // this.glyphIndex = glyphIndex
+    // this.glyphIndex.createIndex()
+
+    // this.updateGlyphs()
   },
 
   mounted() {
