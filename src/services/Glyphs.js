@@ -49,6 +49,8 @@ export default new class {
     })
 
     this.index.add(formattedData)
+
+    // console.log(this.index.export())
   }
 
   isWord(value) {
