@@ -2,7 +2,6 @@ import collect from 'collect.js'
 import FlexSearch from 'flexsearch'
 
 export default new class {
-
   constructor() {
     this.data = []
     this.index = new FlexSearch({
@@ -120,5 +119,4 @@ export default new class {
       limit: 100000,
     })
   }
-
 }()
