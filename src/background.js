@@ -1,4 +1,4 @@
-
+import path from 'path'
 import {
   app, protocol, BrowserWindow, clipboard,
 } from 'electron'
@@ -39,6 +39,7 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: true,
     },
+    icon: path.resolve(__dirname, 'build/icon.icns'),
   })
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
