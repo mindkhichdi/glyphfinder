@@ -49,12 +49,16 @@ export default {
   },
 
   computed: {
-    glyphs() {
-      return Glyphs.search(this.query)
+    formattedQuery() {
+      return this.query ? this.query.trim() : ''
     },
 
     showFrequentlyUsedGlyphs() {
-      return this.query ? !this.query.length : true
+      return !this.formattedQuery.length
+    },
+
+    glyphs() {
+      return Glyphs.search(this.formattedQuery)
     },
   },
 
