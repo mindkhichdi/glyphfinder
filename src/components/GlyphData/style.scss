@@ -74,4 +74,8 @@
     bottom: calc(100% + 8px);
     pointer-events: none;
   }
+
+  &__empty {
+    opacity: 0.2;
+  }
 }
