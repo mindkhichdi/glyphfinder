@@ -51,8 +51,13 @@ export default new class {
         words: [
           ...words,
           item.entities,
-          item.category,
-          item.name,
+          item.category
+            .replace(/[0-9]/g, '')
+            .replace('-A', '')
+            .replace('-B', ''),
+          item.name
+            .replace(' a ', '')
+            .replace(' an ', ''),
         ].join(' '),
       }
     })
