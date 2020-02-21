@@ -4,6 +4,7 @@ import electron from 'electron'
 // eslint-disable-next-line
 import Worker from 'worker-loader!./GlyphIndexWorker.js'
 import PromiseWorker from 'promise-worker'
+import Glyphs from './Glyphs'
 
 export default new class {
   constructor() {
@@ -27,6 +28,10 @@ export default new class {
       glyphs,
       searchIndex,
     }))
+
+    Glyphs
+      .importGlyphs(glyphs)
+      .importIndex(searchIndex)
 
     this.finishCallback()
   }
