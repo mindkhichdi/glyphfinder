@@ -1,18 +1,13 @@
-import fs from 'fs'
-import path from 'path'
-import electron from 'electron'
 // eslint-disable-next-line
 import Worker from 'worker-loader!./GlyphIndexWorker.js'
 import PromiseWorker from 'promise-worker'
 import Glyphs from './Glyphs'
+import DB from './DB'
 
 export default new class {
   constructor() {
-    const userDataPath = (electron.app || electron.remote.app).getPath('userData')
-
     this.worker = new Worker()
     this.promiseWorker = new PromiseWorker(this.worker)
-    this.dbPath = path.join(userDataPath, 'db.json')
     this.progress = 0
   }
 
@@ -24,10 +19,8 @@ export default new class {
       glyphs,
     })
 
-    fs.writeFileSync(this.dbPath, JSON.stringify({
-      glyphs,
-      searchIndex,
-    }))
+    DB.saveGlyphs(glyphs)
+    DB.saveSearchIndex(searchIndex)
 
     Glyphs
       .importGlyphs(glyphs)
@@ -46,18 +39,6 @@ export default new class {
     this.finishCallback = callback
 
     return this
-  }
-
-  getDB() {
-    try {
-      if (!fs.existsSync(this.dbPath)) {
-        return null
-      }
-      return JSON.parse(fs.readFileSync(this.dbPath, 'utf8'))
-    } catch (err) {
-      console.error(err)
-      return null
-    }
   }
 
   createSupportedGlyphs() {
