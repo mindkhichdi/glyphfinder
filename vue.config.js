@@ -84,6 +84,18 @@ module.exports = {
             },
           ],
         },
+        win: {
+          publish: [
+            {
+              provider: 'spaces',
+              name: 'ueber',
+              region: 'fra1',
+              channel: 'latest',
+              path: '/glyphfinder/win',
+              acl: 'public-read',
+            },
+          ],
+        },
       },
     },
   },
