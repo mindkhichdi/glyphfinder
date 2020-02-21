@@ -43,6 +43,15 @@ export default new class {
 
   createSupportedGlyphs() {
     return new Promise(resolve => {
+      const glyphs = DB.glyphs()
+
+      if (glyphs) {
+        this.progressCallback(100)
+        resolve(glyphs)
+
+        return
+      }
+
       this.worker.postMessage('getSupportedGlyphs')
 
       this.worker.onmessage = event => {
