@@ -38,8 +38,8 @@ export default new class {
     return fs.existsSync(this.searchIndexPath)
   }
 
-  saveSearchIndex(glyphs = []) {
-    fs.writeFileSync(this.searchIndexPath, JSON.stringify(glyphs))
+  saveSearchIndex(index = []) {
+    fs.writeFileSync(this.searchIndexPath, JSON.stringify(index))
   }
 
   searchIndex() {
