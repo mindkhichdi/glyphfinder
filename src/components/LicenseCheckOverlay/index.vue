@@ -36,7 +36,7 @@ export default {
     },
 
     close() {
-      Event.emit('hideLicense')
+      Event.emit('hideLicenseCheck')
     },
 
     buyLicense() {

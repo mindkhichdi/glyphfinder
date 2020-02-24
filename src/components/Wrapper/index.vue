@@ -86,6 +86,16 @@ export default {
 
       this.showGlyphCheck = false
     },
+
+    onShowLicenseCheck() {
+      console.log('show license check')
+      this.showLicenseCheck = true
+    },
+
+    onHideLicenseCheck() {
+      console.log('hude license check')
+      this.showLicenseCheck = false
+    },
   },
 
   mounted() {
@@ -93,12 +103,16 @@ export default {
     ipcRenderer.on('showPreferences', this.onShowPreferences)
     Event.on('hidePreferences', this.onHidePreferences)
     Event.on('hideGlyphCheck', this.onHideGlyphCheck)
+    Event.on('showLicenseCheck', this.onShowLicenseCheck)
+    Event.on('hideLicenseCheck', this.onHideLicenseCheck)
   },
 
   beforeDestroy() {
     ipcRenderer.removeListener('showPreferences', this.onShowPreferences)
     Event.off('hidePreferences', this.onHidePreferences)
     Event.off('hideGlyphCheck', this.onHideGlyphCheck)
+    Event.off('showLicenseCheck', this.onShowLicenseCheck)
+    Event.off('hideLicenseCheck', this.onHideLicenseCheck)
   },
 }
 </script>
