@@ -1,5 +1,6 @@
 import registerPromiseWorker from 'promise-worker/register'
 import Glyphs from './Glyphs'
+import glyphs from '../data/data.json'
 
 class SupportedGlyphs {
   construct() {
@@ -7,29 +8,25 @@ class SupportedGlyphs {
   }
 
   init() {
-    import('../data/data.json').then(importData => {
-      // const glyphs = collect(data).take(100).toArray()
-      const glyphs = importData.default
-      const glyphsCount = glyphs.length
-      const supportedGlyphs = glyphs.filter((glyph, index) => {
-        const progress = Math.floor((100 / glyphsCount) * (index + 1))
+    const glyphsCount = glyphs.length
+    const supportedGlyphs = glyphs.filter((glyph, index) => {
+      const progress = Math.floor((100 / glyphsCount) * (index + 1))
 
-        if (progress > this.progress) {
-          postMessage({
-            type: 'progress',
-            value: progress,
-          })
-        }
+      if (progress > this.progress) {
+        postMessage({
+          type: 'progress',
+          value: progress,
+        })
+      }
 
-        this.progress = progress
+      this.progress = progress
 
-        return this.isGlyphInFont(glyph.symbol)
-      })
+      return this.isGlyphInFont(glyph.symbol)
+    })
 
-      postMessage({
-        type: 'supportedGlyphs',
-        value: supportedGlyphs,
-      })
+    postMessage({
+      type: 'supportedGlyphs',
+      value: supportedGlyphs,
     })
   }
 
@@ -50,9 +47,12 @@ class SupportedGlyphs {
     return !missingCharBoxes.includes(imageData.toString())
   }
 
-  createSearchIndex(glyphs = []) {
+  createSearchIndex(filteredGlyphs = []) {
+    const newGlyphs = filteredGlyphs
+      .map(filteredGlyph => glyphs.find(glyph => glyph.symbol === filteredGlyph.symbol))
+
     return Glyphs
-      .importGlyphs(glyphs)
+      .importGlyphs(newGlyphs)
       .createIndex()
       .exportIndex()
   }
@@ -69,4 +69,6 @@ registerPromiseWorker(message => {
   if (message.type === 'createSearchIndex') {
     return new SupportedGlyphs().createSearchIndex(message.glyphs)
   }
+
+  return null
 })
