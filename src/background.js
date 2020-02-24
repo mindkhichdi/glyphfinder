@@ -36,7 +36,7 @@ function createWindow() {
     titleBarStyle: 'hidden',
     trafficLightPosition: {
       x: 16,
-      y: 13,
+      y: 24,
     },
     transparent: true,
     backgroundColor: '#000',
