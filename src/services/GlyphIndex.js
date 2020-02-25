@@ -14,16 +14,16 @@ export default new class {
   async create() {
     const glyphs = await this.createSupportedGlyphs()
 
-    const searchIndex = await this.promiseWorker.postMessage({
+    const { searchIndex, newGlyphs } = await this.promiseWorker.postMessage({
       type: 'createSearchIndex',
       glyphs,
     })
 
-    DB.saveGlyphs(glyphs)
+    DB.saveGlyphs(newGlyphs)
     DB.saveSearchIndex(searchIndex)
 
     Glyphs
-      .importGlyphs(glyphs)
+      .importGlyphs(newGlyphs)
       .importIndex(searchIndex)
 
     this.finishCallback()
