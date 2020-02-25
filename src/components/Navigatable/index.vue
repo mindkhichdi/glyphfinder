@@ -70,28 +70,41 @@ export default {
     },
 
     glyphRows() {
-      return this.chunkGlyphs(this.formattedGlyphs)
-        .map((row, index, array) => {
-          if (index === 0 && this.hasFrequentlyUsedGlyphs) {
+      return collect(this.formattedGlyphs)
+        .mapToGroups(item => [item.set, item])
+        .map((glyphs, set) => ([{
+          glyphs,
+          set: set || 'Other Glyphs',
+        }]))
+        .flatten(1)
+        .sortBy(group => group.set === 'Other Glyphs')
+        .map(group => this.chunkGlyphs(group.glyphs).map((row, index) => {
+          // if (index === 0 && this.hasFrequentlyUsedGlyphs) {
+          if (index === 0) {
             return {
               ...row,
-              title: 'Glyphs',
+              title: group.set,
               height: this.glyphRowWithTitleHeight,
             }
           }
 
+          return {
+            ...row,
+            height: this.glyphRowHeight,
+          }
+        }))
+        .flatten(1)
+        .map((row, index, array) => {
           if (index === array.length - 1) {
             return {
-              height: this.glyphRowHeight + this.expandedHeight + 20,
               ...row,
+              height: this.glyphRowHeight + this.expandedHeight + 20,
             }
           }
 
-          return {
-            height: this.glyphRowHeight,
-            ...row,
-          }
+          return row
         })
+        .toArray()
     },
 
     frequentlyUsedGlyphRows() {
