@@ -9,10 +9,9 @@ export default new class {
   template() {
     return [
       {
-        label: isMac ? app.getName() : 'File',
+        label: app.getName(),
         submenu: [
           { role: 'about' },
-          { type: 'separator' },
           {
             label: 'Preferences',
             accelerator: 'CmdOrCtrl+,',
@@ -24,11 +23,6 @@ export default new class {
                 })
             },
           },
-          { type: 'separator' },
-          { role: 'hide' },
-          { role: 'hideothers' },
-          { role: 'unhide' },
-          { type: 'separator' },
           ...(!Setapp.isActive ? [
             {
               label: 'Check for Updates',
@@ -37,10 +31,13 @@ export default new class {
               },
             },
           ] : []),
-          { type: 'separator' },
+          ...(isMac ? [
+            { type: 'separator' },
+          ] : []),
           { role: 'quit' },
         ],
       },
+      /*
       {
         label: 'Edit',
         submenu: [
@@ -89,6 +86,7 @@ export default new class {
           { role: 'front' },
         ],
       },
+      */
     ]
   }
 
