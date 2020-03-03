@@ -37,56 +37,56 @@ export default new class {
           { role: 'quit' },
         ],
       },
-      /*
-      {
-        label: 'Edit',
-        submenu: [
-          { role: 'undo' },
-          { role: 'redo' },
-          { type: 'separator' },
-          { role: 'cut' },
-          { role: 'copy' },
-          { role: 'paste' },
-          ...(isMac ? [
-            { role: 'pasteAndMatchStyle' },
-          ] : []),
-          { role: 'selectAll' },
-          { role: 'delete' },
-        ],
-      },
-      {
-        label: 'View',
-        submenu: [
-          { role: 'reload' },
-          { type: 'separator' },
-          { role: 'resetzoom' },
-          { role: 'zoomin' },
-          { role: 'zoomout' },
-          { type: 'separator' },
-          { role: 'togglefullscreen' },
-          {
-            label: 'Show Developer Tools',
-            accelerator: 'Alt+CmdOrCtrl+I',
-            click(item, focusedWindow) {
-              if (focusedWindow) {
-                focusedWindow.toggleDevTools()
-              }
+      ...(isMac ? [
+        {
+          label: 'Edit',
+          submenu: [
+            { role: 'undo' },
+            { role: 'redo' },
+            { type: 'separator' },
+            { role: 'cut' },
+            { role: 'copy' },
+            { role: 'paste' },
+            ...(isMac ? [
+              { role: 'pasteAndMatchStyle' },
+            ] : []),
+            { role: 'selectAll' },
+            { role: 'delete' },
+          ],
+        },
+        {
+          label: 'View',
+          submenu: [
+            { role: 'reload' },
+            { type: 'separator' },
+            { role: 'resetzoom' },
+            { role: 'zoomin' },
+            { role: 'zoomout' },
+            { type: 'separator' },
+            { role: 'togglefullscreen' },
+            {
+              label: 'Show Developer Tools',
+              accelerator: 'Alt+CmdOrCtrl+I',
+              click(item, focusedWindow) {
+                if (focusedWindow) {
+                  focusedWindow.toggleDevTools()
+                }
+              },
             },
-          },
-        ],
-      },
-      {
-        role: 'window',
-        submenu: [
-          { role: 'minimize' },
-          { role: 'close' },
-          { role: 'minimize' },
-          { role: 'zoom' },
-          { type: 'separator' },
-          { role: 'front' },
-        ],
-      },
-      */
+          ],
+        },
+        {
+          role: 'window',
+          submenu: [
+            { role: 'minimize' },
+            { role: 'close' },
+            { role: 'minimize' },
+            { role: 'zoom' },
+            { type: 'separator' },
+            { role: 'front' },
+          ],
+        },
+      ] : []),
     ]
   }
 
