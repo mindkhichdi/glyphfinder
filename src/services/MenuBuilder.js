@@ -12,6 +12,9 @@ export default new class {
         label: app.getName(),
         submenu: [
           { role: 'about' },
+          ...(isMac ? [
+            { type: 'separator' },
+          ] : []),
           {
             label: 'Preferences',
             accelerator: 'CmdOrCtrl+,',
@@ -23,6 +26,9 @@ export default new class {
                 })
             },
           },
+          ...(isMac ? [
+            { type: 'separator' },
+          ] : []),
           ...(!Setapp.isActive ? [
             {
               label: 'Check for Updates',
