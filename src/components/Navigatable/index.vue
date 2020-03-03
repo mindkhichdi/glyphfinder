@@ -73,7 +73,7 @@ export default {
     glyphRows() {
       const defaultSetName = 'Other Glyphs'
 
-      if (!this.hasFrequentlyUsedGlyphs) {
+      if (!this.showFrequentlyUsedGlyphs) {
         return this.chunkGlyphs(this.formattedGlyphs).map((row, index, array) => {
           if (index === array.length - 1) {
             return {
