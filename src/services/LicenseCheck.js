@@ -10,7 +10,7 @@ export default new class {
   constructor() {
     this.limit = process.env.NODE_ENV === 'development'
       ? Infinity
-      : 2
+      : 1
 
     ipcMain.on('verifyLicenseKey', (_, licenseKey) => {
       this.verifyLicenseKey(licenseKey)
@@ -40,10 +40,11 @@ export default new class {
         increment_uses_count: true,
       })
       .then(response => {
+        const limit = parseInt(nestedValue(response, 'data.purchase.variants').replace(/\D/g, ''), 10) || this.limit
         const uses = nestedValue(response, 'data.uses')
 
-        if (uses > this.limit) {
-          this.emitError('Sorry. This license is already in use.')
+        if (uses > limit) {
+          this.emitError(`Sorry. This license is already in use on ${limit} ${limit > 1 ? 'devices' : 'device'}.`)
           return
         }
 
