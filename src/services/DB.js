@@ -31,7 +31,9 @@ export default new class {
   }
 
   removeGlyphs() {
-    fs.unlinkSync(this.glyphsPath)
+    if (this.glyphsExists()) {
+      fs.unlinkSync(this.glyphsPath)
+    }
   }
 
   searchIndexExists() {
@@ -55,7 +57,9 @@ export default new class {
   }
 
   removeSearchIndex() {
-    fs.unlinkSync(this.searchIndexPath)
+    if (this.searchIndexExists()) {
+      fs.unlinkSync(this.searchIndexPath)
+    }
   }
 
   removeAll() {
