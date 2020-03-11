@@ -3,7 +3,7 @@ import { ipcMain } from 'electron'
 import Store from './Store'
 import { nestedValue } from '../helpers'
 
-const masterKey = 'OPBPXGH2-6GHNU9IE-FHUEH7AW-ZXT3UP23'
+const masterKey = 'O2J7GGH2-3NGHUU9J-FHUEH7AW-ITU3UP15'
 
 export default new class {
 
