@@ -5,6 +5,7 @@ import {
   app,
   globalShortcut,
   ipcMain,
+  BrowserWindow,
 } from 'electron'
 import Store from './Store'
 import User from './User'
@@ -21,7 +22,7 @@ export default new class {
 
   getShortcut() {
     const electronKeyMap = {
-      Meta: 'CommandOrControl',
+      Meta: 'CmdOrCtrl',
     }
 
     const shortcut = Store.get('shortcut')
@@ -61,7 +62,7 @@ export default new class {
       /* global __static */
       icon: path.join(__static, 'MenuIconTemplate.png'),
       preloadWindow: true,
-      showDockIcon: true,
+      showDockIcon: false,
       tooltip: 'Glyphfinder',
     })
 
@@ -69,6 +70,17 @@ export default new class {
       // this.menubar.window.webContents.executeJavaScript('window.location.hash = "/shortcuts"')
 
       const contextMenu = Menu.buildFromTemplate([
+        {
+          label: 'Preferences',
+          click: () => {
+            BrowserWindow
+              .getAllWindows()
+              .forEach(browserWindow => {
+                browserWindow.webContents.send('showPreferences')
+              })
+          },
+        },
+        { type: 'separator' },
         {
           label: 'Quit',
           click: () => {
