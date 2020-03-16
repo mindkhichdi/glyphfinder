@@ -17,5 +17,8 @@ export default new Store({
       DB.removeAll()
       store.clear()
     },
+    '1.1.0': store => {
+      store.set('shortcut', ['Meta', 'Shift', 'g'])
+    },
   },
 })
