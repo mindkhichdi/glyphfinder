@@ -19,6 +19,7 @@ Setapp.init()
 const isProduction = process.env.NODE_ENV === 'production'
 const isDevelopment = !isProduction
 const isWindows = process.platform === 'win32'
+const isMenubar = Store.get('showMenubar', false)
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -27,58 +28,69 @@ let win
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true, standard: true } }])
 
-function createWindow() {
+function getWindow() {
+  return new Promise(resolve => {
+    const windowOptions = {
+      title: 'Glyphfinder',
+      width: 340 + (isWindows ? 6 : 0),
+      height: 580,
+      resizable: false,
+      fullscreen: false,
+      frame: false,
+      titleBarStyle: 'hidden',
+      trafficLightPosition: {
+        x: 16,
+        y: 24,
+      },
+      transparent: !isWindows,
+      backgroundColor: '#000',
+      webPreferences: {
+        nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
+        nodeIntegrationInWorker: process.env.ELECTRON_NODE_INTEGRATION,
+      },
+      icon: path.resolve(__dirname, isWindows ? 'build/icon.ico' : 'build/icon.icns'),
+    }
 
+    if (isMenubar) {
+      MenuBar.create(windowOptions).then(browserWindow => {
+        win = browserWindow
+        resolve()
+      })
+    } else {
+      win = new BrowserWindow(windowOptions)
+      resolve()
+    }
+  })
+}
+
+function createWindow() {
   MenuBuilder.setMenu()
 
-  const windowOptions = {
-    title: 'Glyphfinder',
-    width: 340 + (isWindows ? 6 : 0),
-    height: 580,
-    resizable: false,
-    fullscreen: false,
-    frame: false,
-    titleBarStyle: 'hidden',
-    trafficLightPosition: {
-      x: 16,
-      y: 24,
-    },
-    transparent: !isWindows,
-    backgroundColor: '#000',
-    webPreferences: {
-      nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
-      nodeIntegrationInWorker: process.env.ELECTRON_NODE_INTEGRATION,
-    },
-    icon: path.resolve(__dirname, isWindows ? 'build/icon.ico' : 'build/icon.icns'),
-  }
+  getWindow().then(() => {
+    // console.log({ win })
+    LicenseCheck.setWindow(win)
 
-  if (Store.get('showMenubar', false)) {
-    MenuBar.create(windowOptions)
-    win = MenuBar.getWindow()
-  } else {
-    win = new BrowserWindow(windowOptions)
-  }
+    if (process.env.WEBPACK_DEV_SERVER_URL) {
+      // Load the url of the dev server if in development mode
+      win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
+      // if (!process.env.IS_TEST && !isMenubar) win.webContents.openDevTools()
+    } else {
+      createProtocol('app')
+      // Load the index.html when not in development
+      win.loadURL('app://./index.html')
+    }
 
-  LicenseCheck.setWindow(win)
+    if (!isMenubar) {
+      win.show()
+    }
 
-  if (process.env.WEBPACK_DEV_SERVER_URL) {
-    // Load the url of the dev server if in development mode
-    win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
-    if (!process.env.IS_TEST) win.webContents.openDevTools()
-  } else {
-    createProtocol('app')
-    // Load the index.html when not in development
-    win.loadURL('app://./index.html')
-  }
+    if (isProduction && !Setapp.isActive) {
+      Updater.silentlyCheckForUpdates()
+    }
 
-  win.show()
-
-  if (isProduction && !Setapp.isActive) {
-    Updater.silentlyCheckForUpdates()
-  }
-
-  win.on('closed', () => {
-    win = null
+    win.on('closed', () => {
+      win = null
+    })
   })
 }
 

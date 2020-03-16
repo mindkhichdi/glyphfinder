@@ -28,88 +28,98 @@ export default new class {
   }
 
   create(windowOptions = {}) {
-    if (
-      this.menubar
-      // || !User.isVerified
-      || !Store.get('showMenubar', true)
-    ) {
-      return
-    }
-
-    const { titleBarStyle, trafficLightPosition, ...options } = windowOptions
-
-    this.menubar = menubar({
-      index: process.env.WEBPACK_DEV_SERVER_URL
-        ? process.env.WEBPACK_DEV_SERVER_URL
-        : 'app://./index.html',
-      browserWindow: {
-        ...options,
-        movable: false,
-        // alwaysOnTop: isDevelopment,
-      },
-      /* global __static */
-      icon: path.join(__static, 'MenuIconTemplate.png'),
-      preloadWindow: true,
-      showDockIcon: false,
-      tooltip: 'Glyphfinder',
-    })
-
-    this.menubar.on('after-create-window', () => {
-      const contextMenu = Menu.buildFromTemplate([
-        {
-          label: 'Preferences',
-          click: () => {
-            BrowserWindow
-              .getAllWindows()
-              .forEach(browserWindow => {
-                browserWindow.webContents.send('showPreferences')
-                browserWindow.show()
-              })
-          },
-        },
-        { type: 'separator' },
-        {
-          label: 'Quit',
-          click: () => {
-            this.menubar.app.quit()
-          },
-        },
-      ])
-
-      this.menubar.tray.on('right-click', () => {
-        Setapp.reportUsageEvent('user-interaction')
-        this.menubar.tray.popUpContextMenu(contextMenu)
-      })
-    })
-
-    this.menubar.on('show', () => {
-      Setapp.reportUsageEvent('user-interaction')
-
-      // if (isDevelopment) {
-      //   this.menubar.window.openDevTools()
-      // }
-    })
-
-    this.menubar.on('hide', () => {
-      // if (isDevelopment) {
-      //   this.menubar.window.closeDevTools()
-      // }
-    })
-
-    this.menubar.on('ready', () => {
-      if (!User.isVerified) {
-        this.show()
+    return new Promise((resolve, reject) => {
+      if (
+        this.menubar
+        // || !User.isVerified
+        || !Store.get('showMenubar', true)
+      ) {
+        reject()
+        return
       }
-    })
 
-    this.addShortcutListener()
+      const { titleBarStyle, trafficLightPosition, ...options } = windowOptions
 
-    ipcMain.on('shortcutChanged', () => {
+      this.menubar = menubar({
+        index: process.env.WEBPACK_DEV_SERVER_URL
+          ? process.env.WEBPACK_DEV_SERVER_URL
+          : 'app://./index.html',
+        browserWindow: {
+          ...options,
+          // x: 0,
+          // y: 0,
+          movable: false,
+          // alwaysOnTop: isDevelopment,
+        },
+        /* global __static */
+        // windowPosition:
+        icon: path.join(__static, 'MenuIconTemplate.png'),
+        preloadWindow: true,
+        showDockIcon: false,
+        tooltip: 'Glyphfinder',
+      })
+
+      this.menubar.on('after-create-window', () => {
+
+
+        const contextMenu = Menu.buildFromTemplate([
+          {
+            label: 'Preferences',
+            click: () => {
+              BrowserWindow
+                .getAllWindows()
+                .forEach(browserWindow => {
+                  browserWindow.webContents.send('showPreferences')
+                  browserWindow.show()
+                })
+            },
+          },
+          { type: 'separator' },
+          {
+            label: 'Quit',
+            click: () => {
+              this.menubar.app.quit()
+            },
+          },
+        ])
+
+        this.menubar.tray.on('right-click', () => {
+          Setapp.reportUsageEvent('user-interaction')
+          this.menubar.tray.popUpContextMenu(contextMenu)
+        })
+
+        resolve(this.getWindow())
+      })
+
+      this.menubar.on('show', () => {
+        Setapp.reportUsageEvent('user-interaction')
+
+        // if (isDevelopment) {
+        //   this.menubar.window.openDevTools()
+        // }
+      })
+
+      this.menubar.on('hide', () => {
+        // if (isDevelopment) {
+        //   this.menubar.window.closeDevTools()
+        // }
+      })
+
+      this.menubar.on('ready', () => {
+        if (!User.isVerified) {
+          this.show()
+        }
+      })
+
       this.addShortcutListener()
-    })
 
-    app.on('will-quit', () => {
-      globalShortcut.unregisterAll()
+      ipcMain.on('shortcutChanged', () => {
+        this.addShortcutListener()
+      })
+
+      app.on('will-quit', () => {
+        globalShortcut.unregisterAll()
+      })
     })
   }
 
