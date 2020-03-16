@@ -52,7 +52,7 @@ export default new class {
         width: 340 + (isWindows ? 6 : 0),
         height: 580,
         movable: false,
-        // alwaysOnTop: isDevelopment,
+        alwaysOnTop: isDevelopment,
         webPreferences: {
           nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
           nodeIntegrationInWorker: process.env.ELECTRON_NODE_INTEGRATION,
@@ -78,26 +78,24 @@ export default new class {
       ])
 
       this.menubar.tray.on('right-click', () => {
-        // Setapp.reportUsageEvent('user-interaction')
+        Setapp.reportUsageEvent('user-interaction')
         this.menubar.tray.popUpContextMenu(contextMenu)
       })
     })
 
-    // this.menubar.on('show', () => {
-    //   // Setapp.reportUsageEvent('user-interaction')
+    this.menubar.on('show', () => {
+      Setapp.reportUsageEvent('user-interaction')
 
-    //   if (isDevelopment) {
-    //     this.menubar.window.openDevTools()
-    //   }
-    // })
+      if (isDevelopment) {
+        this.menubar.window.openDevTools()
+      }
+    })
 
-    // this.menubar.on('hide', () => {
-    //   if (isDevelopment) {
-    //     this.menubar.window.closeDevTools()
-    //   }
-
-    //   this.menubar.window.webContents.send('activeWindow:hide')
-    // })
+    this.menubar.on('hide', () => {
+      if (isDevelopment) {
+        this.menubar.window.closeDevTools()
+      }
+    })
 
     this.menubar.on('after-hide', () => {
       // restore focus of previous app only if there is no main window of mouseless
@@ -155,11 +153,11 @@ export default new class {
       }
     })
 
-    globalShortcut.register('escape', () => {
-      if (this.isWindowVisible(this.menubar.window)) {
-        this.hide()
-      }
-    })
+    // globalShortcut.register('escape', () => {
+    //   if (this.isWindowVisible(this.menubar.window)) {
+    //     this.hide()
+    //   }
+    // })
   }
 
 }()
