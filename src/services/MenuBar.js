@@ -21,7 +21,7 @@ export default new class {
 
   getShortcut() {
     const electronKeyMap = {
-      Meta: 'Command',
+      Meta: 'CommandOrControl',
     }
 
     const shortcut = Store.get('shortcut')
