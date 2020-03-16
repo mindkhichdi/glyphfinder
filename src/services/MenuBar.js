@@ -30,7 +30,7 @@ export default new class {
   create(windowOptions = {}) {
     if (
       this.menubar
-      || !User.isVerified
+      // || !User.isVerified
       || !Store.get('showMenubar', true)
     ) {
       return
@@ -45,7 +45,7 @@ export default new class {
       browserWindow: {
         ...options,
         movable: false,
-        alwaysOnTop: isDevelopment,
+        // alwaysOnTop: isDevelopment,
       },
       /* global __static */
       icon: path.join(__static, 'MenuIconTemplate.png'),
@@ -85,14 +85,20 @@ export default new class {
     this.menubar.on('show', () => {
       Setapp.reportUsageEvent('user-interaction')
 
-      if (isDevelopment) {
-        this.menubar.window.openDevTools()
-      }
+      // if (isDevelopment) {
+      //   this.menubar.window.openDevTools()
+      // }
     })
 
     this.menubar.on('hide', () => {
-      if (isDevelopment) {
-        this.menubar.window.closeDevTools()
+      // if (isDevelopment) {
+      //   this.menubar.window.closeDevTools()
+      // }
+    })
+
+    this.menubar.on('ready', () => {
+      if (!User.isVerified) {
+        this.show()
       }
     })
 
@@ -109,6 +115,10 @@ export default new class {
 
   isWindowVisible(window) {
     return !window.isDestroyed() && window.isVisible()
+  }
+
+  getWindow() {
+    return this.menubar.window
   }
 
   show() {
