@@ -15,11 +15,6 @@ const isProduction = process.env.NODE_ENV === 'production'
 const isDevelopment = !isProduction
 
 export default new class {
-
-  constructor() {
-    this.mainWindow = null
-  }
-
   getShortcut() {
     const electronKeyMap = {
       Meta: 'CmdOrCtrl',
@@ -32,7 +27,7 @@ export default new class {
     return shortcut
   }
 
-  create() {
+  create(windowOptions = {}) {
     if (
       this.menubar
       || !User.isVerified
@@ -41,23 +36,16 @@ export default new class {
       return
     }
 
-    const isWindows = process.platform === 'win32'
+    const { titleBarStyle, trafficLightPosition, ...options } = windowOptions
 
     this.menubar = menubar({
       index: process.env.WEBPACK_DEV_SERVER_URL
         ? process.env.WEBPACK_DEV_SERVER_URL
         : 'app://./index.html',
       browserWindow: {
-        transparent: true,
-        backgroundColor: '#000',
-        width: 340 + (isWindows ? 6 : 0),
-        height: 580,
+        ...options,
         movable: false,
         alwaysOnTop: isDevelopment,
-        webPreferences: {
-          nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
-          nodeIntegrationInWorker: process.env.ELECTRON_NODE_INTEGRATION,
-        },
       },
       /* global __static */
       icon: path.join(__static, 'MenuIconTemplate.png'),
@@ -67,8 +55,6 @@ export default new class {
     })
 
     this.menubar.on('after-create-window', () => {
-      // this.menubar.window.webContents.executeJavaScript('window.location.hash = "/shortcuts"')
-
       const contextMenu = Menu.buildFromTemplate([
         {
           label: 'Preferences',
@@ -109,13 +95,6 @@ export default new class {
       }
     })
 
-    this.menubar.on('after-hide', () => {
-      // restore focus of previous app only if there is no main window of mouseless
-      if (!this.isWindowVisible(this.mainWindow)) {
-        this.menubar.app.hide()
-      }
-    })
-
     this.addShortcutListener()
 
     ipcMain.on('shortcutChanged', () => {
@@ -129,10 +108,6 @@ export default new class {
 
   isWindowVisible(window) {
     return !window.isDestroyed() && window.isVisible()
-  }
-
-  setMainWindow(win) {
-    this.mainWindow = win
   }
 
   show() {
