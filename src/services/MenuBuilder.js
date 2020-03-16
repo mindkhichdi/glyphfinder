@@ -23,6 +23,7 @@ export default new class {
                 .getAllWindows()
                 .forEach(browserWindow => {
                   browserWindow.webContents.send('showPreferences')
+                  browserWindow.show()
                 })
             },
           },
