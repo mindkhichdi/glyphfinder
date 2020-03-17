@@ -10,6 +10,7 @@ import {
 import Store from './Store'
 import User from './User'
 import Setapp from './Setapp'
+import Updater from './Updater'
 
 const isProduction = process.env.NODE_ENV === 'production'
 const isDevelopment = !isProduction
@@ -60,9 +61,9 @@ export default new class {
       })
 
       this.menubar.on('after-create-window', () => {
-
-
         const contextMenu = Menu.buildFromTemplate([
+          { role: 'about' },
+          { type: 'separator' },
           {
             label: 'Preferences',
             click: () => {
@@ -74,6 +75,15 @@ export default new class {
                 })
             },
           },
+          { type: 'separator' },
+          ...(!Setapp.isActive ? [
+            {
+              label: 'Check for Updates',
+              click(menuItem) {
+                Updater.checkForUpdates(menuItem)
+              },
+            },
+          ] : []),
           { type: 'separator' },
           {
             label: 'Quit',
