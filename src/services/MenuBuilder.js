@@ -40,6 +40,12 @@ export default new class {
           ...(isMac ? [
             { type: 'separator' },
           ] : []),
+          { role: 'hide' },
+          { role: 'hideothers' },
+          { role: 'unhide' },
+          ...(isMac ? [
+            { type: 'separator' },
+          ] : []),
           { role: 'quit' },
         ],
       },
