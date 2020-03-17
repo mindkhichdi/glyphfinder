@@ -11,8 +11,8 @@ export default new class {
       {
         label: app.getName(),
         submenu: [
-          { role: 'about' },
           ...(isMac ? [
+            { role: 'about' },
             { type: 'separator' },
           ] : []),
           {
@@ -40,11 +40,9 @@ export default new class {
           ] : []),
           ...(isMac ? [
             { type: 'separator' },
-          ] : []),
-          { role: 'hide' },
-          { role: 'hideothers' },
-          { role: 'unhide' },
-          ...(isMac ? [
+            { role: 'hide' },
+            { role: 'hideothers' },
+            { role: 'unhide' },
             { type: 'separator' },
           ] : []),
           { role: 'quit' },

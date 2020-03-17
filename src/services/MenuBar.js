@@ -14,6 +14,7 @@ import Updater from './Updater'
 
 const isProduction = process.env.NODE_ENV === 'production'
 const isDevelopment = !isProduction
+const isMac = process.platform === 'darwin'
 
 export default new class {
   getShortcut() {
@@ -59,8 +60,10 @@ export default new class {
 
       this.menubar.on('after-create-window', () => {
         const contextMenu = Menu.buildFromTemplate([
-          { role: 'about' },
-          { type: 'separator' },
+          ...(isMac ? [
+            { role: 'about' },
+            { type: 'separator' },
+          ] : []),
           {
             label: 'Preferences',
             click: () => {
