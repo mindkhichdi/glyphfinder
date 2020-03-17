@@ -47,13 +47,10 @@ export default new class {
           : 'app://./index.html',
         browserWindow: {
           ...options,
-          // x: 0,
-          // y: 0,
           movable: false,
-          // alwaysOnTop: isDevelopment,
+          alwaysOnTop: isDevelopment,
         },
         /* global __static */
-        // windowPosition:
         icon: path.join(__static, 'MenuIconTemplate.png'),
         preloadWindow: true,
         showDockIcon: false,
@@ -104,15 +101,15 @@ export default new class {
       this.menubar.on('show', () => {
         Setapp.reportUsageEvent('user-interaction')
 
-        // if (isDevelopment) {
-        //   this.menubar.window.openDevTools()
-        // }
+        if (isDevelopment) {
+          this.menubar.window.openDevTools()
+        }
       })
 
       this.menubar.on('hide', () => {
-        // if (isDevelopment) {
-        //   this.menubar.window.closeDevTools()
-        // }
+        if (isDevelopment) {
+          this.menubar.window.closeDevTools()
+        }
       })
 
       this.menubar.on('ready', () => {
