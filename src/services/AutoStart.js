@@ -1,11 +1,8 @@
-import { app } from 'electron'
 import Store from './Store'
-
-const isProduction = process.env.NODE_ENV === 'production'
+import { app, isProduction } from '../helpers'
 
 export default new class {
-
-  init() {
+  update() {
     if (isProduction) {
       app.setLoginItemSettings({
         openAtLogin: Store.get('autoStart', true),
@@ -14,5 +11,4 @@ export default new class {
       })
     }
   }
-
 }()
