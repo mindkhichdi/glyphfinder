@@ -11,10 +11,7 @@ import Store from './Store'
 import User from './User'
 import Setapp from './Setapp'
 import Updater from './Updater'
-import { isMac } from '../helpers'
-
-const isProduction = process.env.NODE_ENV === 'production'
-const isDevelopment = !isProduction
+import { isMac, isDevelopment } from '../helpers'
 
 export default new class {
   getShortcut() {
@@ -33,7 +30,6 @@ export default new class {
     return new Promise((resolve, reject) => {
       if (
         this.menubar
-        // || !User.isVerified
         || !Store.get('showMenubar', true)
       ) {
         reject()
@@ -49,7 +45,7 @@ export default new class {
         browserWindow: {
           ...options,
           movable: false,
-          alwaysOnTop: isDevelopment,
+          // alwaysOnTop: isDevelopment,
         },
         /* global __static */
         icon: path.join(__static, 'MenuIconTemplate.png'),
@@ -104,15 +100,15 @@ export default new class {
       this.menubar.on('show', () => {
         Setapp.reportUsageEvent('user-interaction')
 
-        if (isDevelopment) {
-          this.menubar.window.openDevTools()
-        }
+        // if (isDevelopment) {
+        //   this.menubar.window.openDevTools()
+        // }
       })
 
       this.menubar.on('hide', () => {
-        if (isDevelopment) {
-          this.menubar.window.closeDevTools()
-        }
+        // if (isDevelopment) {
+        //   this.menubar.window.closeDevTools()
+        // }
       })
 
       this.menubar.on('ready', () => {
@@ -170,12 +166,6 @@ export default new class {
         this.show()
       }
     })
-
-    // globalShortcut.register('escape', () => {
-    //   if (this.isWindowVisible(this.menubar.window)) {
-    //     this.hide()
-    //   }
-    // })
   }
 
 }()
