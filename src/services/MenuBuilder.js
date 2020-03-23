@@ -68,10 +68,6 @@ export default new class {
         submenu: [
           { role: 'reload' },
           { type: 'separator' },
-          { role: 'resetzoom' },
-          { role: 'zoomin' },
-          { role: 'zoomout' },
-          { type: 'separator' },
           {
             label: 'Show Developer Tools',
             accelerator: 'Alt+CmdOrCtrl+I',
