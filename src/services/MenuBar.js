@@ -22,7 +22,7 @@ export default new class {
     return new Promise((resolve, reject) => {
       if (
         this.menubar
-        || !Store.get('showMenubar', true)
+        || !Store.get('showMenubar')
       ) {
         reject()
         return
