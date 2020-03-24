@@ -15,15 +15,7 @@ import { isMac } from '../helpers'
 
 export default new class {
   getShortcut() {
-    const electronKeyMap = {
-      Meta: 'CmdOrCtrl',
-    }
-
-    const shortcut = Store.get('shortcut')
-      .map(key => (electronKeyMap[key] ? electronKeyMap[key] : key))
-      .join('+')
-
-    return shortcut
+    return Store.get('shortcut').join('+')
   }
 
   create(windowOptions = {}) {
@@ -37,6 +29,7 @@ export default new class {
       }
 
       const { titleBarStyle, trafficLightPosition, ...options } = windowOptions
+      const icon = isMac ? 'MenuIconTemplate.png' : 'MenuIconTemplate@2x.png'
 
       this.menubar = menubar({
         index: process.env.WEBPACK_DEV_SERVER_URL
@@ -48,7 +41,7 @@ export default new class {
           // alwaysOnTop: isDevelopment,
         },
         /* global __static */
-        icon: path.join(__static, 'MenuIconTemplate.png'),
+        icon: path.join(__static, icon),
         preloadWindow: true,
         showDockIcon: false,
         tooltip: 'Glyphfinder',
