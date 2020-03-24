@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { ipcRenderer } from 'electron'
+import { remote } from 'electron'
 import collect from 'collect.js'
 import copy from 'copy-to-clipboard'
 import Store from '@/services/Store'
@@ -73,7 +73,11 @@ export default {
       }
 
       if (Store.get('hideAfterCopy')) {
-        ipcRenderer.send('hide')
+        if (this.isWindows) {
+          remote.getCurrentWindow().minimize()
+        } else {
+          remote.app.hide()
+        }
       }
     },
 
