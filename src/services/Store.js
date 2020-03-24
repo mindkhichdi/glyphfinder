@@ -28,5 +28,8 @@ export default new Store({
       store.set('autoStart', true)
       store.set('hideAfterCopy', true)
     },
+    '1.1.2': () => {
+      DB.removeSearchIndex()
+    },
   },
 })
