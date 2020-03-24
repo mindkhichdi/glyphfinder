@@ -25,22 +25,22 @@ export default new class {
   get(symbol) {
     return collect(this.keymap)
       .map(key => {
-        const value = key.value === ' ' ? '␣' : key.value
+        const value = key.value === ' ' ? 'space' : key.value
 
         if (key.value === symbol) {
           return [value]
         }
 
         if (key.withAltGr === symbol) {
-          return ['⌥', value]
+          return ['alt', value]
         }
 
         if (key.withShift === symbol) {
-          return ['⇧', value]
+          return ['shift', value]
         }
 
         if (key.withShiftAltGr === symbol) {
-          return ['⇧', '⌥', value]
+          return ['shift', 'alt', value]
         }
 
         return null
