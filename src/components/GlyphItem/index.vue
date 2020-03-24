@@ -78,6 +78,12 @@ export default {
         } else {
           remote.app.hide()
         }
+
+        // eslint-disable-next-line
+        new Notification('Glyphfinder', {
+          body: 'Copied to clipboard!',
+          silent: true,
+        })
       }
     },
 
