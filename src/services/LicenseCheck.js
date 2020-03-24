@@ -40,7 +40,8 @@ export default new class {
         increment_uses_count: true,
       })
       .then(response => {
-        const limit = parseInt(nestedValue(response, 'data.purchase.variants').replace(/\D/g, ''), 10) || this.limit
+        const limit = parseInt(nestedValue(response, 'data.purchase.variants').replace(/\D/g, ''), 10) * 2
+          || this.limit * 2
         const uses = nestedValue(response, 'data.uses')
 
         if (uses > limit) {
