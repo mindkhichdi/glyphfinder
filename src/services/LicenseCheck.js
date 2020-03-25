@@ -1,9 +1,12 @@
 import axios from 'axios'
 import { ipcMain } from 'electron'
+import log from 'electron-log'
 import Store from './Store'
 import { nestedValue } from '../helpers'
 
 const masterKey = 'O2J7GGH2-3NGHUU9J-FHUEH7AW-ITU3UP15'
+
+log.transports.file.getFile()
 
 export default new class {
 
@@ -69,10 +72,13 @@ export default new class {
       .catch(error => {
         if (!error.response) {
           this.emitError('Please check your internet connection.')
+          log.error('license check failed. maybe no internet connection.', error)
         } else if (error.response.status && error.response.status >= 500) {
           this.emitError('Oh no. Gumroad can\'t be reached. Please try again later.')
+          log.error('license check failed. maybe gumroad down.', error)
         } else {
           this.emitError('Sorry. This license does not exist.')
+          log.error('license check failed.', error)
         }
       })
   }
