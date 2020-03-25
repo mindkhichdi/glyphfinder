@@ -31,6 +31,7 @@
 </template>
 
 <script>
+import { ipcRenderer } from 'electron'
 import Navigatable from '@/components/Navigatable'
 import GlyphList from '@/components/GlyphList'
 import GlyphData from '@/components/GlyphData'
@@ -75,6 +76,14 @@ export default {
     reset() {
       this.query = ''
     },
+  },
+
+  mounted() {
+    ipcRenderer.on('windowHidden', this.reset)
+  },
+
+  beforeDestroy() {
+    ipcRenderer.removeListener('windowHidden', this.reset)
   },
 }
 </script>
