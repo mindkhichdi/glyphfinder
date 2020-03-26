@@ -6,7 +6,7 @@ import {
   globalShortcut,
   ipcMain,
   BrowserWindow,
-  systemPreferences,
+  nativeTheme,
   // screen,
 } from 'electron'
 import Store from './Store'
@@ -25,7 +25,7 @@ export default new class {
       return 'MenuIconTemplate.png'
     }
 
-    if (systemPreferences.isDarkMode()) {
+    if (nativeTheme.shouldUseDarkColors) {
       return 'MenuIconTemplateDarkMode.png'
     }
 
