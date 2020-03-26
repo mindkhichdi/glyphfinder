@@ -6,6 +6,7 @@ import {
   globalShortcut,
   ipcMain,
   BrowserWindow,
+  systemPreferences,
   // screen,
 } from 'electron'
 import Store from './Store'
@@ -19,6 +20,18 @@ export default new class {
     return Store.get('shortcut').join('+')
   }
 
+  getIcon() {
+    if (isMac) {
+      return 'MenuIconTemplate.png'
+    }
+
+    if (systemPreferences.isDarkMode()) {
+      return 'MenuIconTemplateDarkMode.png'
+    }
+
+    return 'MenuIconTemplate@2x.png'
+  }
+
   create(windowOptions = {}) {
     return new Promise((resolve, reject) => {
       if (
@@ -30,7 +43,6 @@ export default new class {
       }
 
       const { titleBarStyle, trafficLightPosition, ...options } = windowOptions
-      const icon = isMac ? 'MenuIconTemplate.png' : 'MenuIconTemplate@2x.png'
 
       // const { bounds } = screen.getPrimaryDisplay()
       // const x = Math.ceil(bounds.x + ((bounds.width - options.width) / 2))
@@ -48,7 +60,7 @@ export default new class {
           // alwaysOnTop: isDevelopment,
         },
         /* global __static */
-        icon: path.join(__static, icon),
+        icon: path.join(__static, this.getIcon()),
         preloadWindow: true,
         showDockIcon: false,
         tooltip: 'Glyphfinder',
