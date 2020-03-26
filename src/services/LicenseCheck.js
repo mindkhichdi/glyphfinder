@@ -1,8 +1,11 @@
-import axios from 'axios'
+import superagent from 'superagent'
+import superagentJsonapify from 'superagent-jsonapify'
 import { ipcMain } from 'electron'
 import log from 'electron-log'
 import Store from './Store'
 import { nestedValue } from '../helpers'
+
+superagentJsonapify(superagent)
 
 const masterKey = 'O2J7GGH2-3NGHUU9J-FHUEH7AW-ITU3UP15'
 
@@ -36,37 +39,38 @@ export default new class {
       return
     }
 
-    axios
-      .post('https://api.gumroad.com/v2/licenses/verify', {
+    superagent
+      .post('https://api.gumroad.com/v2/licenses/verify')
+      .send({
         product_permalink: process.env.VUE_APP_GUMROAD_PRODUCT_ID,
         license_key: licenseKey,
         increment_uses_count: true,
       })
       .then(response => {
-        const limit = parseInt(nestedValue(response, 'data.purchase.variants').replace(/\D/g, ''), 10) * 2
+        const limit = parseInt(nestedValue(response, 'body.purchase.variants').replace(/\D/g, ''), 10) * 2
           || this.limit * 2
-        const uses = nestedValue(response, 'data.uses')
+        const uses = nestedValue(response, 'body.uses')
 
         if (uses > limit) {
           this.emitError(`Sorry. This license is already in use on ${limit} ${limit > 1 ? 'devices' : 'device'}.`)
           return
         }
 
-        const refunded = nestedValue(response, 'data.purchase.refunded')
+        const refunded = nestedValue(response, 'body.purchase.refunded')
 
         if (refunded) {
           this.emitError('Sorry. This purchase has been refunded.')
           return
         }
 
-        const chargebacked = nestedValue(response, 'data.purchase.chargebacked')
+        const chargebacked = nestedValue(response, 'body.purchase.chargebacked')
 
         if (chargebacked) {
           this.emitError('Sorry. This purchase has been chargebacked.')
           return
         }
 
-        Store.set('verification', response.data)
+        Store.set('verification', response.body)
         this.emitSuccess()
       })
       .catch(error => {
