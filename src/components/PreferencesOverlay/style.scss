@@ -53,6 +53,19 @@
     display: flex;
     align-items: center;
   }
+
+  &__option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-top: 1px solid rgba($colorWhite, 0.05);
+  }
+
+  &__grey-text {
+    color: rgba($colorWhite, 0.5);
+    font-style: italic;
+  }
 }
 
 .switch {
