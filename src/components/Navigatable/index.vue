@@ -1,4 +1,5 @@
 <script>
+import { ipcRenderer } from 'electron'
 import collect from 'collect.js'
 import Store from '@/services/Store'
 
@@ -28,9 +29,9 @@ export default {
       glyphRowWithTitleHeight: 92,
       firstFullyVisibleRowIndex: 0,
       lastFullyVisibleRowIndex: 0,
-      isExpanded: Store.get('expanded', false),
+      isExpanded: Store.get('expanded'),
       expandedHeight: 101,
-      usage: Store.get('usage', []),
+      usage: Store.get('usage'),
       scrollPosition: {
         offset: 0,
       },
@@ -204,15 +205,7 @@ export default {
     glyphs: {
       immediate: true,
       handler() {
-        this.selection = {
-          x: 0,
-          y: 0,
-        }
-
-        this.updateVisibleRows()
-        this.maybeUpdateScrollPosition()
-
-        // console.log(this.glyphs.map(glyph => glyph.symbol).join(' '))
+        this.resetView()
       },
     },
   },
@@ -280,6 +273,10 @@ export default {
         x,
         y,
       }
+    },
+
+    resetSelection() {
+      this.setSelection(0, 0)
     },
 
     handleKeyDown(event) {
@@ -362,15 +359,32 @@ export default {
 
       this.maybeUpdateScrollPosition()
     },
+
+    resetView() {
+      this.resetSelection()
+      this.updateVisibleRows()
+      this.maybeUpdateScrollPosition()
+      // console.log(this.glyphs.map(glyph => glyph.symbol).join(' '))
+    },
+
+    handleWindowHidden() {
+      this.usage = Store.get('usage')
+
+      if (Store.get('clearSearchOnHide')) {
+        this.resetView()
+      }
+    },
   },
 
   mounted() {
     this.updateVisibleRows()
     document.addEventListener('keydown', this.handleKeyDown)
+    ipcRenderer.on('windowHidden', this.handleWindowHidden)
   },
 
   beforeDestroy() {
     document.removeEventListener('keydown', this.handleKeyDown)
+    ipcRenderer.removeListener('windowHidden', this.handleWindowHidden)
   },
 
   provide() {
