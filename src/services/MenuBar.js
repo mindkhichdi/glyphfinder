@@ -67,43 +67,14 @@ export default new class {
       })
 
       this.menubar.on('after-create-window', () => {
-        const contextMenu = Menu.buildFromTemplate([
-          ...(isMac ? [
-            { role: 'about' },
-            { type: 'separator' },
-          ] : []),
-          {
-            label: 'Preferences',
-            click: () => {
-              BrowserWindow
-                .getAllWindows()
-                .forEach(browserWindow => {
-                  browserWindow.webContents.send('showPreferences')
-                  browserWindow.show()
-                })
-            },
-          },
-          { type: 'separator' },
-          ...(!Setapp.isActive ? [
-            {
-              label: 'Check for Updates',
-              click(menuItem) {
-                Updater.checkForUpdates(menuItem)
-              },
-            },
-          ] : []),
-          { type: 'separator' },
-          {
-            label: 'Quit',
-            click: () => {
-              this.menubar.app.quit()
-            },
-          },
-        ])
-
         this.menubar.tray.on('right-click', () => {
-          Setapp.reportUsageEvent('user-interaction')
-          this.menubar.tray.popUpContextMenu(contextMenu)
+          this.handleRightClick()
+        })
+
+        this.menubar.tray.on('click', event => {
+          if (event.ctrlKey) {
+            this.handleRightClick()
+          }
         })
 
         resolve(this.getWindow())
@@ -139,6 +110,45 @@ export default new class {
         globalShortcut.unregisterAll()
       })
     })
+  }
+
+  handleRightClick() {
+    const contextMenu = Menu.buildFromTemplate([
+      ...(isMac ? [
+        { role: 'about' },
+        { type: 'separator' },
+      ] : []),
+      {
+        label: 'Preferences',
+        click: () => {
+          BrowserWindow
+            .getAllWindows()
+            .forEach(browserWindow => {
+              browserWindow.webContents.send('showPreferences')
+              browserWindow.show()
+            })
+        },
+      },
+      { type: 'separator' },
+      ...(!Setapp.isActive ? [
+        {
+          label: 'Check for Updates',
+          click(menuItem) {
+            Updater.checkForUpdates(menuItem)
+          },
+        },
+      ] : []),
+      { type: 'separator' },
+      {
+        label: 'Quit',
+        click: () => {
+          this.menubar.app.quit()
+        },
+      },
+    ])
+
+    Setapp.reportUsageEvent('user-interaction')
+    this.menubar.tray.popUpContextMenu(contextMenu)
   }
 
   isWindowVisible(window) {
