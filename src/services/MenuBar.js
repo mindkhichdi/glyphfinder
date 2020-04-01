@@ -13,6 +13,7 @@ import Store from './Store'
 import User from './User'
 import Setapp from './Setapp'
 import Updater from './Updater'
+import DB from './DB'
 import { isMac } from '../helpers'
 
 export default new class {
@@ -95,7 +96,9 @@ export default new class {
       })
 
       this.menubar.on('ready', () => {
-        if (!User.isVerified) {
+        const dbExists = DB.glyphsExists() && DB.searchIndexExists()
+
+        if (!User.isVerified || (Setapp.isActive && !dbExists)) {
           this.show()
         }
       })
