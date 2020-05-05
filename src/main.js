@@ -1,3 +1,4 @@
+import { ipcRenderer, remote } from 'electron'
 import Vue from 'vue'
 import keyboardSymbol from 'keyboard-symbol'
 import Wrapper from '@/components/Wrapper'
@@ -28,6 +29,12 @@ new Vue({
 
     document.documentElement.classList.add(this.isWindows ? 'is-windows' : 'is-mac')
 
+    this.setDarkMode(remote.getCurrentWindow().isDarkMode)
+
+    ipcRenderer.on('darkModeChanged', (event, isDarkMode) => {
+      this.setDarkMode(isDarkMode)
+    })
+
     if (showMenubar) {
       document.documentElement.classList.add('is-menubar')
     }
@@ -42,6 +49,16 @@ new Vue({
 
       this.titleBar.updateTitle(' ')
     }
+  },
+
+  methods: {
+    setDarkMode(value) {
+      if (value) {
+        document.documentElement.classList.add('is-dark-mode')
+      } else {
+        document.documentElement.classList.remove('is-dark-mode')
+      }
+    },
   },
 
   beforeDestroy() {
