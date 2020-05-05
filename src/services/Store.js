@@ -51,5 +51,8 @@ export default new Store({
         store.set('shortcut', ['control', 'super', 'g'])
       }
     },
+    '1.3.0': store => {
+      store.set('darkMode', 'system')
+    },
   },
 })
