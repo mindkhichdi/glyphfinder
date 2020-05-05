@@ -58,6 +58,12 @@ export default {
     }
   },
 
+  props: {
+    showPreferences: {
+      default: false,
+    },
+  },
+
   computed: {
     formattedQuery() {
       return this.query ? this.query.trim() : ''
@@ -86,6 +92,10 @@ export default {
     },
 
     hideWindow() {
+      if (this.showPreferences) {
+        return
+      }
+
       if (this.isWindows) {
         remote.getCurrentWindow().minimize()
       } else {
