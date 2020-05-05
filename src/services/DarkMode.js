@@ -9,12 +9,16 @@ export default new class {
     ipcMain.on('darkModePreferenceChanged', this._handleUpdate.bind(this))
   }
 
-  set() {
+  get() {
     const preference = Store.get('darkMode')
 
-    this.isDarkMode = preference === 'system'
+    return preference === 'system'
       ? nativeTheme.shouldUseDarkColors
       : preference === 'true'
+  }
+
+  set() {
+    this.isDarkMode = this.get()
 
     BrowserWindow
       .getAllWindows()
