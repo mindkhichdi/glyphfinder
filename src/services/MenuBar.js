@@ -78,6 +78,12 @@ export default new class {
           }
         })
 
+        const dbExists = DB.glyphsExists() && DB.searchIndexExists()
+
+        if (!User.isVerified || (Setapp.isActive && !dbExists)) {
+          setTimeout(() => this.show(), 200)
+        }
+
         resolve(this.getWindow())
       })
 
@@ -93,14 +99,6 @@ export default new class {
         // if (isDevelopment) {
         //   this.menubar.window.closeDevTools()
         // }
-      })
-
-      this.menubar.on('ready', () => {
-        const dbExists = DB.glyphsExists() && DB.searchIndexExists()
-
-        if (!User.isVerified || (Setapp.isActive && !dbExists)) {
-          this.show()
-        }
       })
 
       this.addShortcutListener()
