@@ -36,4 +36,4 @@ export default new class {
         browserWindow.webContents.send('darkModeChanged', this.isDarkMode)
       })
   }
-}
+}()
