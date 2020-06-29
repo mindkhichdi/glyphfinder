@@ -153,7 +153,7 @@ export default new class {
   }
 
   isWindowVisible(window) {
-    return !window.isDestroyed() && window.isVisible()
+    return !!window && (!window.isDestroyed() && window.isVisible())
   }
 
   getWindow() {
