@@ -32,7 +32,7 @@
     );
   }
 
-  &:hover {
+  .is-dark-mode &:hover {
     background-color: rgba(var(--colorWhite), 0.1);
   }
 
