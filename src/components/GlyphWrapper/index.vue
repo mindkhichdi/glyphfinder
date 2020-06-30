@@ -96,11 +96,6 @@ export default {
         return
       }
 
-      if (this.query) {
-        this.reset()
-        return
-      }
-
       if (this.isWindows) {
         remote.getCurrentWindow().minimize()
       } else {
